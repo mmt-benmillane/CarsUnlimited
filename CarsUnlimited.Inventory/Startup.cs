@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using CarsUnlimited.Inventory.Models;
+using Microsoft.Extensions.Options;
 
 namespace CarsUnlimited.Inventory
 {
@@ -26,6 +28,11 @@ namespace CarsUnlimited.Inventory
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<InventoryDatabaseSettings>(
+                Configuration.GetSection(nameof(InventoryDatabaseSettings)));
+
+            services.AddSingleton<IInventoryDatabaseSettings>(sp => 
+                sp.GetRequiredService<IOptions<InventoryDatabaseSettings>>().Value);
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
