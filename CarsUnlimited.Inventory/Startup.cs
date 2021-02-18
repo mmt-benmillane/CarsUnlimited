@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using CarsUnlimited.Inventory.Models;
 using Microsoft.Extensions.Options;
+using CarsUnlimited.Inventory.Services;
 
 namespace CarsUnlimited.Inventory
 {
@@ -33,6 +34,8 @@ namespace CarsUnlimited.Inventory
 
             services.AddSingleton<IInventoryDatabaseSettings>(sp => 
                 sp.GetRequiredService<IOptions<InventoryDatabaseSettings>>().Value);
+
+            services.AddSingleton<InventoryService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
