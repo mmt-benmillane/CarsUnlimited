@@ -11,10 +11,12 @@ namespace CarsUnlimited.Inventory.Controllers
     public class InventoryController : ControllerBase
     {
         private readonly InventoryService _inventoryService;
+        private readonly ILogger<InventoryController> _logger;
 
-        public InventoryController(InventoryService inventoryService)
+        public InventoryController(InventoryService inventoryService, ILogger<InventoryController> logger)
         {
             _inventoryService = inventoryService;
+            _logger = logger;
         }
 
         [HttpGet]
