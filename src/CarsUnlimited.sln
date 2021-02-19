@@ -7,6 +7,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.Inventory", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.Shared", "CarsUnlimited.Shared\CarsUnlimited.Shared.csproj", "{DBDFF985-050A-4FCC-BB64-2A5CE2D439AD}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker Compose", "Docker Compose", "{AD07B9AE-9DCE-47DF-943B-8D2628CA433A}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

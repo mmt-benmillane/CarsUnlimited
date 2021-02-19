@@ -1,0 +1,14 @@
+version: '3.4'
+
+services:
+
+  mongodb:
+   image: mongo:4.4-bionic
+
+  inventory-api:
+   image: ${DOCKER_REGISTRY-}inventory.api
+   build:
+    context: .
+    dockerfile: CarsUnlimited.Inventory/Dockerfile
+   depends_on:
+    - mongodb
