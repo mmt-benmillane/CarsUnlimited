@@ -4,11 +4,17 @@ services:
 
   mongodb:
    image: mongo:4.4-bionic
+   ports:
+   - 27017:27017
 
   inventory-api:
    image: ${DOCKER_REGISTRY-}inventory.api
    build:
     context: .
-    dockerfile: CarsUnlimited.Inventory/Dockerfile
+    dockerfile: CarsUnlimited.InventoryAPI/Dockerfile
+   ports:
+    - 5010:80
+   environment:
+   - ASPNETCORE_ENVIRONMENT=Development
    depends_on:
     - mongodb

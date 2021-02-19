@@ -11,11 +11,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using CarsUnlimited.Inventory.Models;
 using Microsoft.Extensions.Options;
-using CarsUnlimited.Inventory.Services;
+using CarsUnlimited.InventoryAPI.Repository;
+using CarsUnlimited.InventoryAPI.Services;
 
-namespace CarsUnlimited.Inventory
+namespace CarsUnlimited.InventoryAPI
 {
     public class Startup
     {
@@ -35,12 +35,14 @@ namespace CarsUnlimited.Inventory
             services.AddSingleton<IInventoryDatabaseSettings>(sp => 
                 sp.GetRequiredService<IOptions<InventoryDatabaseSettings>>().Value);
 
-            services.AddSingleton<InventoryService>();
+            services.AddScoped(typeof(IMongoRepository<>), typeof(MongoRepository<>));
+
+            services.AddScoped<IInventoryService, InventoryService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "CarsUnlimited.Inventory", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Cars Unlimited Inventory API", Version = "v1" });
             });
         }
 
@@ -51,10 +53,10 @@ namespace CarsUnlimited.Inventory
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "CarsUnlimited.Inventory v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Cars Unlimited Inventory API v1"));
             }
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

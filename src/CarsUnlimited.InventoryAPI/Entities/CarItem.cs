@@ -1,14 +1,13 @@
-﻿using System;
+﻿using CarsUnlimited.Shared.Attributes;
+using CarsUnlimited.Shared.Entities;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace CarsUnlimited.Shared.Models
+namespace CarsUnlimited.InventoryAPI.Entities
 {
-    public class CarItem
+    [BsonCollection("inventory")]
+    public class CarItem : Document
     {
-        [BsonId]
-        [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
         public string CarPicture { get; set; }
         public string CarManufacturer { get; set; }
         public string CarModel { get; set; }

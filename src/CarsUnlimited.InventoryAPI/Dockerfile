@@ -7,17 +7,17 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
-COPY ["CarsUnlimited.Inventory/CarsUnlimited.Inventory.csproj", "CarsUnlimited.Inventory/"]
+COPY ["CarsUnlimited.InventoryAPI/CarsUnlimited.InventoryAPI.csproj", "CarsUnlimited.InventoryAPI/"]
 COPY ["CarsUnlimited.Shared/CarsUnlimited.Shared.csproj", "CarsUnlimited.Shared/"]
-RUN dotnet restore "CarsUnlimited.Inventory/CarsUnlimited.Inventory.csproj"
+RUN dotnet restore "CarsUnlimited.InventoryAPI/CarsUnlimited.InventoryAPI.csproj"
 COPY . .
-WORKDIR "/src/CarsUnlimited.Inventory"
-RUN dotnet build "CarsUnlimited.Inventory.csproj" -c Release -o /app/build
+WORKDIR "/src/CarsUnlimited.InventoryAPI"
+RUN dotnet build "CarsUnlimited.InventoryAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "CarsUnlimited.Inventory.csproj" -c Release -o /app/publish
+RUN dotnet publish "CarsUnlimited.InventoryAPI.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "CarsUnlimited.Inventory.dll"]
+ENTRYPOINT ["dotnet", "CarsUnlimited.InventoryAPI.dll"]
