@@ -16,5 +16,6 @@ services:
     - 5010:80
    environment:
    - ASPNETCORE_ENVIRONMENT=Development
+   - InventoryDatabaseSettings__ConnectionString=mongodb://mongodb:27017
    depends_on:
     - mongodb
