@@ -27,27 +27,41 @@ namespace CarsUnlimited.InventoryAPI.Controllers
         [HttpGet("{id:length(24)}", Name = "GetCar")]
         public ActionResult<CarItem> Get(string id)
         {
+            _logger.LogInformation($"GetCar: Looking up {id}");
+
             var carItem = _inventoryService.Get(id);
 
             if (carItem is null)
             {
+                _logger.LogInformation($"GetCar: No item found with ID {id}");
                 return NotFound();
             }
 
+            _logger.LogInformation($"GetCar: Item found with ID {id}. {carItem.CarManufacturer} {carItem.CarModel}. Stock level: {carItem.CarsInStock}");
             return carItem;
         }
 
         [HttpPut("{id:length(24)}")]
         public IActionResult UpdateStock(string id, CarItem carIn)
         {
+            _logger.LogInformation($"UpdateStock: Looking up item {id}");
+
             var carItem = _inventoryService.Get(id);
 
             if (carItem is null)
             {
+                _logger.LogInformation($"UpdateStock: No item found with ID {id}");
                 return NotFound();
             }
 
-            _inventoryService.Update(carIn);
+            try
+            {
+                _inventoryService.Update(carIn);
+            } catch (MongoDB.Driver.MongoException ex)
+            {
+                _logger.LogError($"UpdateStock: Error encountered attemping stock update: {ex.Message}");
+                return StatusCode(500);
+            }
 
             return NoContent();
         }
