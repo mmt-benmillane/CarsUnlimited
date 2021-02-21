@@ -1,8 +1,14 @@
-version: '3.4'
+version: '3.7'
 
 services:
 
-  mongodb:
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686"
+
+  inventorydb:
    image: mongo:4.4-bionic
    ports:
    - 27017:27017
@@ -16,6 +22,9 @@ services:
     - 5010:80
    environment:
    - ASPNETCORE_ENVIRONMENT=Development
-   - InventoryDatabaseSettings__ConnectionString=mongodb://mongodb:27017
+   - InventoryDatabaseSettings__ConnectionString=mongodb://inventorydb:27017
+   - TracingConfiguration__JaegerEndpoint__Host=jaeger
+   - TracingConfiguration__JaegerEndpoint__Port=6831
    depends_on:
-    - mongodb
+    - inventorydb
+    - jaeger

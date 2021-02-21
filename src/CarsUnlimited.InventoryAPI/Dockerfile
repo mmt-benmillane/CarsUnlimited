@@ -9,6 +9,7 @@ FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["CarsUnlimited.InventoryAPI/CarsUnlimited.InventoryAPI.csproj", "CarsUnlimited.InventoryAPI/"]
 COPY ["CarsUnlimited.Shared/CarsUnlimited.Shared.csproj", "CarsUnlimited.Shared/"]
+RUN dotnet clean "CarsUnlimited.InventoryAPI/CarsUnlimited.InventoryAPI.csproj"
 RUN dotnet restore "CarsUnlimited.InventoryAPI/CarsUnlimited.InventoryAPI.csproj"
 COPY . .
 WORKDIR "/src/CarsUnlimited.InventoryAPI"

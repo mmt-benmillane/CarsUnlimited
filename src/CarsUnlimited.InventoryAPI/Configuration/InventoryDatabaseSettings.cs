@@ -1,4 +1,4 @@
-namespace CarsUnlimited.InventoryAPI.Repository
+namespace CarsUnlimited.InventoryAPI.Configuration
 {
     public interface IInventoryDatabaseSettings
     {

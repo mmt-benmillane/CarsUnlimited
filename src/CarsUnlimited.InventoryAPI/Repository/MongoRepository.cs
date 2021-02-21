@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
+using CarsUnlimited.InventoryAPI.Configuration;
 using CarsUnlimited.Shared.Attributes;
 using CarsUnlimited.Shared.Entities;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 
 namespace CarsUnlimited.InventoryAPI.Repository
 {
@@ -17,7 +19,9 @@ namespace CarsUnlimited.InventoryAPI.Repository
 
         public MongoRepository(IInventoryDatabaseSettings settings)
         {
-            var database = new MongoClient(settings.ConnectionString).GetDatabase(settings.DatabaseName);
+            var clientSettings = MongoClientSettings.FromConnectionString(settings.ConnectionString);
+            clientSettings.ClusterConfigurator = cb => cb.Subscribe(new DiagnosticsActivityEventSubscriber());
+            var database = new MongoClient(clientSettings).GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<TDocument>(GetCollectionName(typeof(TDocument)));
         }
 

@@ -14,11 +14,18 @@ using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
 using CarsUnlimited.InventoryAPI.Repository;
 using CarsUnlimited.InventoryAPI.Services;
+using CarsUnlimited.InventoryAPI.Configuration;
+
+using OpenTelemetry;
+using OpenTelemetry.Resources;
+using OpenTelemetry.Trace;
 
 namespace CarsUnlimited.InventoryAPI
 {
     public class Startup
     {
+        private readonly string _serviceName = "CarsUnlimited.InventoryAPI";
+
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -29,11 +36,62 @@ namespace CarsUnlimited.InventoryAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.Configure<InventoryDatabaseSettings>(
-                Configuration.GetSection(nameof(InventoryDatabaseSettings)));
+            TracingConfiguration tracingConfig = Configuration.GetSection("TracingConfiguration").Get<TracingConfiguration>();
 
-            services.AddSingleton<IInventoryDatabaseSettings>(sp => 
+            TraceExporterOptions exporter = (TraceExporterOptions)tracingConfig.Exporter;
+
+            switch (exporter)
+            {
+                case TraceExporterOptions.JAEGER:
+                    services.AddOpenTelemetryTracing((builder) => builder
+                        .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(_serviceName))
+                        .AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation()
+                        .AddJaegerExporter(jaegerOptions =>
+                        {
+                            jaegerOptions.AgentHost = tracingConfig.JaegerEndpoint.Host;
+                            jaegerOptions.AgentPort = tracingConfig.JaegerEndpoint.Port;
+                        }));
+                    break;
+                case TraceExporterOptions.ZIPKIN:
+                    services.AddOpenTelemetryTracing((builder) => builder
+                        .AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation()
+                        .AddZipkinExporter(zipkinOptions =>
+                        {
+                            zipkinOptions.Endpoint = new Uri(tracingConfig.ZipkinEndpoint);
+                        }));
+                    break;
+                case TraceExporterOptions.OPENTELEMETRY_PROTOCOL:
+                    // Adding the OtlpExporter creates a GrpcChannel.
+                    // This switch must be set before creating a GrpcChannel/HttpClient when calling an insecure gRPC service.
+                    // See: https://docs.microsoft.com/aspnet/core/grpc/troubleshoot#call-insecure-grpc-services-with-net-core-client
+                    AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
+                    services.AddOpenTelemetryTracing((builder) => builder
+                        .SetResourceBuilder(ResourceBuilder.CreateDefault().AddService(_serviceName))
+                        .AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation()
+                        .AddOtlpExporter(otlpOptions =>
+                        {
+                            otlpOptions.Endpoint = new Uri(tracingConfig.OltpEndpoint);
+                        }));
+                    break;
+                default:
+                    services.AddOpenTelemetryTracing((builder) => builder
+                        .AddAspNetCoreInstrumentation()
+                        .AddHttpClientInstrumentation()
+                        .AddConsoleExporter());
+                    break;
+            }
+
+            services.Configure<InventoryDatabaseSettings>(
+                 Configuration.GetSection(nameof(InventoryDatabaseSettings)));
+
+            services.AddSingleton<IInventoryDatabaseSettings>(sp =>
                 sp.GetRequiredService<IOptions<InventoryDatabaseSettings>>().Value);
+
+            
 
             services.AddScoped(typeof(IMongoRepository<>), typeof(MongoRepository<>));
 
