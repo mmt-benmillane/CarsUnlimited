@@ -1,7 +1,5 @@
 ﻿using CarsUnlimited.Shared.Attributes;
 using CarsUnlimited.Shared.Entities;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
 
 namespace CarsUnlimited.InventoryAPI.Entities
 {

@@ -7,12 +7,14 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.Shared", "Car
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docker Compose", "Docker Compose", "{AD07B9AE-9DCE-47DF-943B-8D2628CA433A}"
 	ProjectSection(SolutionItems) = preProject
+		docker-compose.cart.yml = docker-compose.cart.yml
+		docker-compose.inventory.yml = docker-compose.inventory.yml
 		docker-compose.yml = docker-compose.yml
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.InventoryAPI", "CarsUnlimited.InventoryAPI\CarsUnlimited.InventoryAPI.csproj", "{52832A11-2D01-412A-AFD9-3E87446ACFC2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarsUnlimited.CartAPI", "CarsUnlimited.CartAPI\CarsUnlimited.CartAPI.csproj", "{537555D2-D0AC-4439-B99C-785E5334090E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.CartAPI", "CarsUnlimited.CartAPI\CarsUnlimited.CartAPI.csproj", "{537555D2-D0AC-4439-B99C-785E5334090E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,24 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using Microsoft.Extensions.Options;
 using CarsUnlimited.InventoryAPI.Repository;
 using CarsUnlimited.InventoryAPI.Services;
 using CarsUnlimited.InventoryAPI.Configuration;
-
-using OpenTelemetry;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using CarsUnlimited.Shared.Configuration;
 
 namespace CarsUnlimited.InventoryAPI
 {
@@ -51,7 +44,8 @@ namespace CarsUnlimited.InventoryAPI
                         {
                             jaegerOptions.AgentHost = tracingConfig.JaegerEndpoint.Host;
                             jaegerOptions.AgentPort = tracingConfig.JaegerEndpoint.Port;
-                        }));
+                        })
+                        .AddMongoDBInstrumentation());
                     break;
                 case TraceExporterOptions.ZIPKIN:
                     services.AddOpenTelemetryTracing((builder) => builder
@@ -60,7 +54,8 @@ namespace CarsUnlimited.InventoryAPI
                         .AddZipkinExporter(zipkinOptions =>
                         {
                             zipkinOptions.Endpoint = new Uri(tracingConfig.ZipkinEndpoint);
-                        }));
+                        })
+                        .AddMongoDBInstrumentation());
                     break;
                 case TraceExporterOptions.OPENTELEMETRY_PROTOCOL:
                     // Adding the OtlpExporter creates a GrpcChannel.
@@ -75,13 +70,15 @@ namespace CarsUnlimited.InventoryAPI
                         .AddOtlpExporter(otlpOptions =>
                         {
                             otlpOptions.Endpoint = new Uri(tracingConfig.OltpEndpoint);
-                        }));
+                        })
+                        .AddMongoDBInstrumentation());
                     break;
                 default:
                     services.AddOpenTelemetryTracing((builder) => builder
                         .AddAspNetCoreInstrumentation()
                         .AddHttpClientInstrumentation()
-                        .AddConsoleExporter());
+                        .AddConsoleExporter()
+                        .AddMongoDBInstrumentation());
                     break;
             }
 

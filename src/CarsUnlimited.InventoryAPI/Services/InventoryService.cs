@@ -1,8 +1,6 @@
 using MongoDB.Driver;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using CarsUnlimited.Shared.Entities;
 using CarsUnlimited.InventoryAPI.Repository;
 using CarsUnlimited.InventoryAPI.Entities;
 

@@ -6,7 +6,6 @@ using System.Threading.Tasks;
 using CarsUnlimited.InventoryAPI.Configuration;
 using CarsUnlimited.Shared.Attributes;
 using CarsUnlimited.Shared.Entities;
-using MongoDB.Bson;
 using MongoDB.Driver;
 using MongoDB.Driver.Core.Extensions.DiagnosticSources;
 
@@ -20,7 +19,8 @@ namespace CarsUnlimited.InventoryAPI.Repository
         public MongoRepository(IInventoryDatabaseSettings settings)
         {
             var clientSettings = MongoClientSettings.FromConnectionString(settings.ConnectionString);
-            clientSettings.ClusterConfigurator = cb => cb.Subscribe(new DiagnosticsActivityEventSubscriber());
+            var options = new InstrumentationOptions { CaptureCommandText = true };
+            clientSettings.ClusterConfigurator = cb => cb.Subscribe(new DiagnosticsActivityEventSubscriber(options));
             var database = new MongoClient(clientSettings).GetDatabase(settings.DatabaseName);
             _collection = database.GetCollection<TDocument>(GetCollectionName(typeof(TDocument)));
         }

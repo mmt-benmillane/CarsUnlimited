@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
-using CarsUnlimited.Shared.Entities;
 using CarsUnlimited.InventoryAPI.Services;
 using CarsUnlimited.InventoryAPI.Entities;
 

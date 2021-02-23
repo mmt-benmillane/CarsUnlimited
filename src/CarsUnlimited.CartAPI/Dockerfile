@@ -8,6 +8,8 @@ EXPOSE 443
 FROM mcr.microsoft.com/dotnet/sdk:5.0-buster-slim AS build
 WORKDIR /src
 COPY ["CarsUnlimited.CartAPI/CarsUnlimited.CartAPI.csproj", "CarsUnlimited.CartAPI/"]
+COPY ["CarsUnlimited.Shared/CarsUnlimited.Shared.csproj", "CarsUnlimited.Shared/"]
+RUN dotnet clean "CarsUnlimited.CartAPI/CarsUnlimited.CartAPI.csproj"
 RUN dotnet restore "CarsUnlimited.CartAPI/CarsUnlimited.CartAPI.csproj"
 COPY . .
 WORKDIR "/src/CarsUnlimited.CartAPI"
