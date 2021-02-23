@@ -20,6 +20,9 @@ This is a list of technologies used (or intended to be used).
 - MongoDB
 - Redis
 - .NET 5
+- Prometheus
+- Grafana
+- Kiali
 
 ## Useful Links
 
