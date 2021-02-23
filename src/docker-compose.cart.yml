@@ -22,9 +22,10 @@ services:
     - 5020:80
    environment:
    - ASPNETCORE_ENVIRONMENT=Development
-   - Redis__Password=""
-   - Redis__Ssl=false
-   - Redis__Endpoint=cartdb:6379
+   - RedisSettings__Password=""
+   - RedisSettings__Ssl=false
+   - RedisSettings__Host=cartdb
+   - RedisSettings__Port=6379
    - TracingConfiguration__JaegerEndpoint__Host=jaeger
    - TracingConfiguration__JaegerEndpoint__Port=6831
    depends_on:
