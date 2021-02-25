@@ -1,6 +1,10 @@
 ﻿using CarsUnlimited.CartAPI.Configuration;
+using CarsUnlimited.CartAPI.Entities;
+using CarsUnlimited.CartAPI.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Primitives;
 using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
@@ -13,19 +17,43 @@ namespace CarsUnlimited.CartAPI.Controllers
     [ApiController]
     public class CartController : ControllerBase
     {
-        private readonly RedisEndpoint _redisEndpoint;
+        private readonly ICartService _cartService;
+        private readonly ILogger<CartController> _logger;
 
-        public CartController(IRedisSettings settings)
+        public CartController(ICartService cartService, ILogger<CartController> logger)
         {
-            _redisEndpoint = new RedisEndpoint(settings.Host, settings.Port);
+            _cartService = cartService;
+            _logger = logger;
         }
 
         [HttpGet]
-        public ActionResult<long> Get()
+        public ActionResult<int> Get([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId)
         {
-            using (var client = new RedisClient(_redisEndpoint))
+            if(!string.IsNullOrWhiteSpace(sessionId))
             {
-                return client.Increment("Visit_Count", 1);
+                return 1;
+            } else
+            {
+                return 0;
+            }
+        }
+
+        [HttpPost]
+        public IActionResult AddItemToCart([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId, [FromBody]CartItem cartItem) 
+        {
+
+            if (!string.IsNullOrWhiteSpace(sessionId))
+            {
+                _logger.LogInformation($"Adding item to cart {sessionId}");
+
+                cartItem.SessionId = sessionId;
+
+                _cartService.AddToCart(cartItem);
+
+                return StatusCode(200);
+            } else
+            {
+                return StatusCode(404);
             }
         }
     }

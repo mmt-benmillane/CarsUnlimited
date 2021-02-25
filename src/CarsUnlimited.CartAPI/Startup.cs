@@ -1,4 +1,5 @@
 using CarsUnlimited.CartAPI.Configuration;
+using CarsUnlimited.CartAPI.Services;
 using CarsUnlimited.Shared.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -87,6 +88,8 @@ namespace CarsUnlimited.CartAPI
 
             services.AddSingleton<IRedisSettings>(sp =>
                 sp.GetRequiredService<IOptions<RedisSettings>>().Value);
+
+            services.AddScoped<ICartService, CartService>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
