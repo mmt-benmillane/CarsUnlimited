@@ -32,7 +32,7 @@ namespace CarsUnlimited.InventoryAPI.Controllers
 
             if (carItem is null)
             {
-                _logger.LogInformation($"GetCar: No item found with ID {id}");
+                _logger.LogError($"GetCar: No item found with ID {id}");
                 return NotFound();
             }
 
