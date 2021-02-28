@@ -23,6 +23,7 @@ This is a list of technologies used (or intended to be used).
 - Prometheus
 - Grafana
 - Kiali
+- Golang
 
 ## Useful Links
 

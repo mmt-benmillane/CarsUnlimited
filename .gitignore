@@ -368,3 +368,5 @@ appsettings.*.json
 
 # Dependency directories (remove the comment below to include it)
 modules/
+
+.docker/

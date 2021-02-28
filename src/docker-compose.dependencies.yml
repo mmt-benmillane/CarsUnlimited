@@ -7,16 +7,30 @@ services:
     ports:
       - "6831:6831/udp"
       - "16686:16686"
-    network_mode: host
 
   cartdb:
-   image: redis:6.2-alpine
-   ports:
-   - 6379:6379
-   network_mode: host
+    image: redis:6.2-alpine
+    ports:
+    - 6379:6379
 
   inventorydb:
-   image: mongo:4.4-bionic
-   ports:
-   - 27017:27017
-   network_mode: host
+    image: mongo:4.4-bionic
+    ports:
+    - 27017:27017
+
+  rabbitmq:
+    image: 'docker.io/bitnami/rabbitmq:3.8-debian-10'
+    ports:
+      - '4369:4369'
+      - '5672:5672'
+      - '25672:25672'
+      - '15672:15672'
+    volumes:
+      - 'rabbitmq_data:/bitnami'
+    environment:
+      RABBITMQ_USERNAME: cars
+      RABBITMQ_PASSWORD: unlimited
+
+volumes:
+  rabbitmq_data:
+    driver: local
