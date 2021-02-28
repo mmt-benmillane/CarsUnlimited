@@ -8,9 +8,9 @@ namespace CarsUnlimited.CartAPI.Services
 {
     public interface ICartService
     {
-        int GetItemsInCartCount(string sessionId);
-        List<CartItem> GetItemsInCart(string sessionId);
-        bool AddToCart(CartItem cartItem);
+        Task<int> GetItemsInCartCount(string sessionId);
+        Task<List<CartItem>> GetItemsInCart(string sessionId);
+        Task<bool> AddToCart(CartItem cartItem);
 
     }
 }

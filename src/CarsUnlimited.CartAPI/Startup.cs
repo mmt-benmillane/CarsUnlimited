@@ -13,6 +13,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using StackExchange.Redis.Extensions.Core.Configuration;
+using StackExchange.Redis.Extensions.System.Text.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -35,6 +37,29 @@ namespace CarsUnlimited.CartAPI
         public void ConfigureServices(IServiceCollection services)
         {
             TracingConfiguration tracingConfig = Configuration.GetSection("TracingConfiguration").Get<TracingConfiguration>();
+            RedisSettings redisSettings = Configuration.GetSection("RedisSettings").Get<RedisSettings>();
+
+            var redisConfiguration = new RedisConfiguration()
+            {
+                AbortOnConnectFail = true,
+                Hosts = new RedisHost[]
+                {
+                    new RedisHost(){Host = redisSettings.Host, Port = redisSettings.Port},
+                },
+                AllowAdmin = false,
+                Database = 0,
+                ConnectTimeout = 10000,
+                Ssl = redisSettings.Ssl,
+                Password = redisSettings.Password,
+                ServerEnumerationStrategy = new ServerEnumerationStrategy()
+                {
+                    Mode = ServerEnumerationStrategy.ModeOptions.All,
+                    TargetRole = ServerEnumerationStrategy.TargetRoleOptions.Any,
+                    UnreachableServerAction = ServerEnumerationStrategy.UnreachableServerActionOptions.Throw
+                },
+                MaxValueLength = 1024,
+                PoolSize = 5
+            };
 
             TraceExporterOptions exporter = (TraceExporterOptions)tracingConfig.Exporter;
 
@@ -83,11 +108,7 @@ namespace CarsUnlimited.CartAPI
                     break;
             }
 
-            services.Configure<RedisSettings>(
-                Configuration.GetSection(nameof(RedisSettings)));
-
-            services.AddSingleton<IRedisSettings>(sp =>
-                sp.GetRequiredService<IOptions<RedisSettings>>().Value);
+            services.AddStackExchangeRedisExtensions<SystemTextJsonSerializer>(redisConfiguration);
 
             services.AddScoped<ICartService, CartService>();
 

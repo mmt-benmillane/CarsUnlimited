@@ -7,13 +7,16 @@ services:
     ports:
       - "6831:6831/udp"
       - "16686:16686"
+    network_mode: host
 
   cartdb:
    image: redis:6.2-alpine
    ports:
    - 6379:6379
+   network_mode: host
 
   inventorydb:
    image: mongo:4.4-bionic
    ports:
    - 27017:27017
+   network_mode: host

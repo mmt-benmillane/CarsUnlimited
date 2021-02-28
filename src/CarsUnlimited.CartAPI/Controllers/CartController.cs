@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
-using ServiceStack.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +38,7 @@ namespace CarsUnlimited.CartAPI.Controllers
         }
 
         [HttpPost]
+        [Route("add-to-cart")]
         public IActionResult AddItemToCart([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId, [FromBody]CartItem cartItem) 
         {
 
@@ -52,6 +52,34 @@ namespace CarsUnlimited.CartAPI.Controllers
 
                 return StatusCode(200);
             } else
+            {
+                return StatusCode(404);
+            }
+        }
+
+        [HttpGet]
+        [Route("get-cart-items")]
+        public IActionResult GetItemsInCart([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId)
+        {
+            if(!string.IsNullOrWhiteSpace(sessionId))
+            {
+                List<CartItem> cartItems = _cartService.GetItemsInCart(sessionId).Result;
+                return StatusCode(200, cartItems);
+            } else
+            {
+                return StatusCode(404);
+            }
+        }
+
+        [HttpGet]
+        [Route("get-cart-items-count")]
+        public IActionResult GetItemsInCartCount([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId)
+        {
+            if (!string.IsNullOrWhiteSpace(sessionId))
+            {
+                return StatusCode(200, _cartService.GetItemsInCartCount(sessionId).Result);
+            }
+            else
             {
                 return StatusCode(404);
             }
