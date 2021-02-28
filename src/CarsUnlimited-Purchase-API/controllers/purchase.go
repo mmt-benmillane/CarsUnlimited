@@ -2,12 +2,13 @@ package controllers
 
 import (
 	"carsunlimited-purchase-api/appsettings"
+	"carsunlimited-purchase-api/models"
+	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/streadway/amqp"
 	"log"
 	"net/http"
-
-	"github.com/streadway/amqp"
 )
 
 type AppSettings struct {
@@ -33,6 +34,17 @@ func CompletePurchase(c *gin.Context) {
 
 	var id = c.Param("id")
 
+	message := models.Message{
+		SessionId: id,
+	}
+
+	msg, err := json.Marshal(message)
+
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
 	conn, err := amqp.Dial(settings.ServiceBusConnectionString)
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
@@ -42,7 +54,7 @@ func CompletePurchase(c *gin.Context) {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"hello", // name
+		"cmd-purchase", // name
 		false,   // durable
 		false,   // delete when unused
 		false,   // exclusive
@@ -51,18 +63,17 @@ func CompletePurchase(c *gin.Context) {
 	)
 	failOnError(err, "Failed to declare a queue")
 
-	body := fmt.Sprintf("PURCHASE THE THINGS with %v", id)
 	err = ch.Publish(
 		"",     // exchange
 		q.Name, // routing key
 		false,  // mandatory
 		false,  // immediate
 		amqp.Publishing{
-			ContentType: "text/plain",
-			Body:        []byte(body),
+			ContentType: "text/json",
+			Body:        []byte(msg),
 		})
 	failOnError(err, "Failed to publish a message")
-	log.Printf(" [x] Sent %s", body)
+	log.Printf(" [x] Sent %s", msg)
 
-	c.JSON(http.StatusOK, gin.H{"data": body})
+	c.JSON(http.StatusOK, gin.H{"data": msg})
 }
