@@ -29,13 +29,41 @@ namespace CarsUnlimited.CartAPI.Services
             try
             {
                 _logger.LogInformation($"AddToCart: Adding item {cartItem.CarId} to cart {cartItem.SessionId}");
-                return await _redisCacheClient.GetDbFromConfiguration().AddAsync(key, cartItem);
+                return await _redisCacheClient.GetDbFromConfiguration().AddAsync(key, cartItem, DateTimeOffset.Now.AddHours(4));
             }
             catch (RedisException ex)
             {
                 _logger.LogError($"AddToCart: Redis Error: {ex.Message}");
                 return false;
             }
+        }
+
+        public async Task<bool> DeleteAllFromCart(string sessionId)
+        {
+            var cartItems = await GetItemsInCart(sessionId);
+            if(cartItems.Any())
+            {
+                List<string> IdsToDelete = new List<string>();
+
+                foreach(var item in cartItems)
+                {
+                    IdsToDelete.Add($"{item.SessionId}_{item.CarId}");
+                }
+
+                try
+                {
+                    await _redisCacheClient.GetDbFromConfiguration().RemoveAllAsync(IdsToDelete);
+                    _logger.LogInformation($"DeleteAllFromCart: Removed all items from cart {sessionId}");
+                    return true;
+                }
+                catch (RedisException ex)
+                {
+                    _logger.LogError($"DeleteAllFromCart: Redis Error: {ex.Message}");
+                    return false;
+                }
+            }
+
+            return false;
         }
 
         public async Task<bool> DeleteFromCart(string sessionId, string carId)
@@ -50,7 +78,16 @@ namespace CarsUnlimited.CartAPI.Services
                     return false;
                 }
 
-                return await _redisCacheClient.GetDbFromConfiguration().RemoveAsync($"{itemToDelete.SessionId}_{itemToDelete.CarId}");
+                try
+                {
+                    _logger.LogInformation($"DeleteFromCart: Removed {itemToDelete.CarId} from cart session {itemToDelete.SessionId}");
+                    return await _redisCacheClient.GetDbFromConfiguration().RemoveAsync($"{itemToDelete.SessionId}_{itemToDelete.CarId}");
+                }
+                catch (RedisException ex)
+                {
+                    _logger.LogError($"DeleteFromCart: Redis Error: {ex.Message}");
+                    return false;
+                }
             }
 
             return false;
