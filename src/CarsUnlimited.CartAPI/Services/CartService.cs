@@ -24,7 +24,7 @@ namespace CarsUnlimited.CartAPI.Services
 
         public async Task<bool> AddToCart(CartItem cartItem)
         {
-            var key = $"{cartItem.SessionId}_{Guid.NewGuid()}";
+            var key = $"{cartItem.SessionId}_{cartItem.CarId}";
 
             try
             {
@@ -38,13 +38,31 @@ namespace CarsUnlimited.CartAPI.Services
             }
         }
 
+        public async Task<bool> DeleteFromCart(string sessionId, string carId)
+        {
+            var cartItems = await GetItemsInCart(sessionId);
+            if (cartItems.Any())
+            {
+                CartItem itemToDelete = cartItems.Where(item => item.CarId == carId).FirstOrDefault();
+
+                if (itemToDelete is null)
+                {
+                    return false;
+                }
+
+                return await _redisCacheClient.GetDbFromConfiguration().RemoveAsync($"{itemToDelete.SessionId}_{itemToDelete.CarId}");
+            }
+
+            return false;
+        }
+
         public async Task<List<CartItem>> GetItemsInCart(string sessionId)
         {
             List<CartItem> cartItems = new List<CartItem>();
 
             try
             {
-                var keys = await _redisCacheClient.GetDbFromConfiguration().SearchKeysAsync($"*{sessionId}*");
+                var keys = await SearchKeys(sessionId);
                 if (keys.Any()) {
                     foreach (string key in keys)
                     {
@@ -73,6 +91,20 @@ namespace CarsUnlimited.CartAPI.Services
 
             return cartItemsCount;
             
+        }
+
+        internal async Task<List<string>> SearchKeys(string sessionId)
+        {
+            try
+            {
+                var keys = await _redisCacheClient.GetDbFromConfiguration().SearchKeysAsync($"*{sessionId}*");
+                return keys.ToList();
+            }
+            catch (RedisException ex)
+            {
+                _logger.LogError($"SearchKeys: Redis Error: {ex.Message}");
+                return null;
+            }
         }
     }
 }

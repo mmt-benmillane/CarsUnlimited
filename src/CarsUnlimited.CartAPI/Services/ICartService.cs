@@ -11,6 +11,7 @@ namespace CarsUnlimited.CartAPI.Services
         Task<int> GetItemsInCartCount(string sessionId);
         Task<List<CartItem>> GetItemsInCart(string sessionId);
         Task<bool> AddToCart(CartItem cartItem);
+        Task<bool> DeleteFromCart(string sessionId, string carId);
 
     }
 }

@@ -59,11 +59,11 @@ namespace CarsUnlimited.CartAPI.Controllers
 
         [HttpGet]
         [Route("get-cart-items")]
-        public IActionResult GetItemsInCart([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId)
+        public async Task<IActionResult> GetItemsInCart([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId)
         {
             if(!string.IsNullOrWhiteSpace(sessionId))
             {
-                List<CartItem> cartItems = _cartService.GetItemsInCart(sessionId).Result;
+                List<CartItem> cartItems = await _cartService.GetItemsInCart(sessionId);
                 return StatusCode(200, cartItems);
             } else
             {
@@ -73,16 +73,28 @@ namespace CarsUnlimited.CartAPI.Controllers
 
         [HttpGet]
         [Route("get-cart-items-count")]
-        public IActionResult GetItemsInCartCount([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId)
+        public async Task<IActionResult> GetItemsInCartCount([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId)
         {
             if (!string.IsNullOrWhiteSpace(sessionId))
             {
-                return StatusCode(200, _cartService.GetItemsInCartCount(sessionId).Result);
+                return StatusCode(200, await _cartService.GetItemsInCartCount(sessionId));
             }
             else
             {
                 return StatusCode(404);
             }
+        }
+
+        [HttpGet]
+        [Route("remove-item-from-cart")]
+        public async Task<IActionResult> RemoveItemFromCart([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId, string carId)
+        {
+            if(!string.IsNullOrWhiteSpace(sessionId) && !string.IsNullOrWhiteSpace(carId))
+            {
+                return StatusCode(200, await _cartService.DeleteFromCart(sessionId, carId));
+            }
+
+            return StatusCode(404);
         }
     }
 }
