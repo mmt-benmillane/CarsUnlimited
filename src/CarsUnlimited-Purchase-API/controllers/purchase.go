@@ -12,7 +12,7 @@ import (
 )
 
 type AppSettings struct {
-	ServiceBusConnectionString string `envconfig:"optional"`
+	ServiceBusConnectionString string
 }
 
 func failOnError(err error, msg string) {

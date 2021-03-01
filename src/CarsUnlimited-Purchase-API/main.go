@@ -11,10 +11,10 @@ func main() {
 	r := gin.Default()
 
 	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{"data": "hello world"})
+		c.Status(http.StatusNoContent)
 	})
 
-	r.POST("/purchase/:id", controllers.CompletePurchase)
+	r.POST("/api/purchase/:id", controllers.CompletePurchase)
 
 	r.Run()
 }
