@@ -54,7 +54,7 @@ func CompletePurchase(c *gin.Context) {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"cmd-purchase", // name
+		"cmd-cart", // name
 		false,   // durable
 		false,   // delete when unused
 		false,   // exclusive
