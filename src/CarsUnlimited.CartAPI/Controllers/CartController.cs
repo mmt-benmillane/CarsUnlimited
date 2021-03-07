@@ -102,7 +102,7 @@ namespace CarsUnlimited.CartAPI.Controllers
 
         [HttpPost]
         [Route("complete-cart")]
-        public async Task<IActionResult> CompleteCart([FromHeader(Name = "X-CarsUnlimited-CartApiKey")] string cartConsumerKey, [FromBody]string sessionId)
+        public async Task<IActionResult> CompleteCart([FromHeader(Name = "X-CarsUnlimited-CartApiKey")] string cartConsumerKey, string sessionId)
         {
             if(!string.IsNullOrWhiteSpace(cartConsumerKey) && cartConsumerKey == _config.GetValue<string>("CartApiKey"))
             {

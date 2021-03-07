@@ -41,7 +41,11 @@ namespace CarsUnlimited.CartWorker
             {
                 client.BaseAddress = new Uri(apiBaseUrl);
                 client.DefaultRequestHeaders.Add("X-CarsUnlimited-CartApiKey", apiKey);
-                var completeCartTask = await client.PostAsync("complete-cart", new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, "application/json"));
+                
+                var msg = JsonSerializer.Deserialize<Dictionary<string, string>>(message);
+                var sId = msg.Values.FirstOrDefault();
+
+                var completeCartTask = await client.PostAsync("complete-cart", new StringContent(sId));
 
                 if (completeCartTask != null)
                 {
