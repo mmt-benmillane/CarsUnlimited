@@ -1,14 +1,10 @@
-﻿using CarsUnlimited.CartAPI.Configuration;
-using CarsUnlimited.CartAPI.Entities;
-using CarsUnlimited.CartAPI.Services;
-using Microsoft.AspNetCore.Http;
+﻿using CarsUnlimited.CartAPI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
-using System;
 using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
+using CarsUnlimited.CartShared.Entities;
 
 namespace CarsUnlimited.CartAPI.Controllers
 {
@@ -106,11 +102,11 @@ namespace CarsUnlimited.CartAPI.Controllers
 
         [HttpPost]
         [Route("complete-cart")]
-        public async Task<IActionResult> CompleteCart([FromHeader(Name = "X-CarsUnlimited-CartConsumerKey")] string cartConsumerKey, [FromBody]CartItem cartItem)
+        public async Task<IActionResult> CompleteCart([FromHeader(Name = "X-CarsUnlimited-CartApiKey")] string cartConsumerKey, [FromBody]string sessionId)
         {
-            if(!string.IsNullOrWhiteSpace(cartConsumerKey) && cartConsumerKey == _config.GetValue<string>("CartApiUrl"))
+            if(!string.IsNullOrWhiteSpace(cartConsumerKey) && cartConsumerKey == _config.GetValue<string>("CartApiKey"))
             {
-                await _cartService.CompleteCart(cartItem);
+                await _cartService.CompleteCart(sessionId);
                 return StatusCode(200);
             }
 

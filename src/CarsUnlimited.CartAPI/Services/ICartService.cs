@@ -1,4 +1,4 @@
-﻿using CarsUnlimited.CartAPI.Entities;
+﻿using CarsUnlimited.CartShared.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,6 +13,6 @@ namespace CarsUnlimited.CartAPI.Services
         Task<bool> AddToCart(CartItem cartItem);
         Task<bool> DeleteFromCart(string sessionId, string carId);
         Task<bool> DeleteAllFromCart(string sessionId);
-        Task<bool> CompleteCart(CartItem cartItem);
+        Task<bool> CompleteCart(string sessionId);
     }
 }

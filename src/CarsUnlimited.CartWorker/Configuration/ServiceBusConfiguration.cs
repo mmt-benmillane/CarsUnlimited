@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CarsUnlimited.CartConsumer.Configuration
+namespace CarsUnlimited.CartWorker.Configuration
 {
     public interface IServiceBusConfiguration
     {

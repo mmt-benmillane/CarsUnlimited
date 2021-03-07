@@ -28,7 +28,7 @@ services:
    ports:
    - 27017:27017
 
-  inventory-api:
+  inventoryapi:
    image: ${DOCKER_REGISTRY-}inventory.api
    build:
     context: .
@@ -43,7 +43,7 @@ services:
    depends_on:
     - inventorydb    
 
-  cart-api:
+  cartapi:
    image: ${DOCKER_REGISTRY-}cart.api
    build:
     context: .
@@ -58,33 +58,39 @@ services:
    - RedisSettings__Port=6379
    - TracingConfiguration__JaegerEndpoint__Host=jaeger
    - TracingConfiguration__JaegerEndpoint__Port=6831
+   - ServiceBusConfiguration__HostName=rabbitmq
+   - ServiceBusConfiguration__UserName=user
+   - ServiceBusConfiguration__Password=bitnami
+   - CartApiKey=THIS_IS_MY_KEY
    depends_on:
     - cartdb
     - rabbitmq
 
-  cart-consumer:
-   image: ${DOCKER_REGISTRY-}cart.consumer
+
+  cartworker:
+   image: ${DOCKER_REGISTRY-}cart.worker
    build:
     context: .
-    dockerfile: CarsUnlimited.CartConsumer/Dockerfile
+    dockerfile: CarsUnlimited.CartWorker/Dockerfile
    environment:
    - ASPNETCORE_ENVIRONMENT=Development
    - ServiceBusConfiguration__HostName=rabbitmq
    - ServiceBusConfiguration__UserName=user
-   - ServiceBusConfiguration__Password=user
+   - ServiceBusConfiguration__Password=bitnami
+   - CartApiKey=THIS_IS_MY_KEY
+   - CartApiUrl=http://cartapi:5020/api/Cart/
    depends_on:
     - cartdb
     - rabbitmq
-   command: ["./wait-for-it.sh", "rabbitmq:5672"]
+    - cartapi
 
-
-  purchase-api:
+  purchaseapi:
    image: ${DOCKER_REGISTRY-}purchase.api
    build:
     context: CarsUnlimited-Purchase-API
     dockerfile: Dockerfile
    environment:
-    - SERVICE_BUS_CONNECTION_STRING=amqp://user:user@rabbitmq:5672/
+    - SERVICE_BUS_CONNECTION_STRING=amqp://user:bitnami@rabbitmq:5672/
    ports:
     - 5030:8080
    depends_on:

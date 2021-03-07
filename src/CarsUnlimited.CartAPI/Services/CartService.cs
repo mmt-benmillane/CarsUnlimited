@@ -1,5 +1,4 @@
 ﻿using CarsUnlimited.CartAPI.Configuration;
-using CarsUnlimited.CartAPI.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
@@ -14,6 +13,7 @@ using System.Threading.Tasks;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using RabbitMQ.Client.Exceptions;
+using CarsUnlimited.CartShared.Entities;
 
 namespace CarsUnlimited.CartAPI.Services
 {
@@ -46,9 +46,9 @@ namespace CarsUnlimited.CartAPI.Services
             }
         }
 
-        public async Task<bool> CompleteCart(CartItem cartItem)
+        public async Task<bool> CompleteCart(string sessionId)
         {
-            _logger.LogInformation($"CompleteCart: Beginning complete cart action for {cartItem.SessionId} and item ID {cartItem.CarId}");
+            _logger.LogInformation($"CompleteCart: Beginning complete cart action for {sessionId}.");
             var serviceBusConfig = _config.GetSection("ServiceBusConfiguration").Get<ServiceBusConfiguration>();
 
             ConnectionFactory connectionFactory = new ConnectionFactory
@@ -58,40 +58,47 @@ namespace CarsUnlimited.CartAPI.Services
                 Password = serviceBusConfig.Password
             };
 
-            InventoryMessage inventoryMessage = new InventoryMessage
+            var cartItems = await GetItemsInCart(sessionId);
+
+            foreach (var cartItem in cartItems)
             {
-                CarId = cartItem.CarId,
-                StockAdjustment = cartItem.Count
-            };
 
-            using (var connection = connectionFactory.CreateConnection())
-            using (var channel = connection.CreateModel())
-            {
-                channel.QueueDeclare(queue: "cmd-inventory",
-                                 durable: false,
-                                 exclusive: false,
-                                 autoDelete: false,
-                                 arguments: null);
-
-                var body = JsonSerializer.SerializeToUtf8Bytes(inventoryMessage);
-
-                try
+                InventoryMessage inventoryMessage = new InventoryMessage
                 {
-                    channel.BasicPublish(exchange: "",
-                                     routingKey: "cmd-inventory",
-                                     basicProperties: null,
-                                     body: body);
-                } catch (RabbitMQClientException ex)
+                    CarId = cartItem.CarId,
+                    StockAdjustment = cartItem.Count
+                };
+
+                using (var connection = connectionFactory.CreateConnection())
+                using (var channel = connection.CreateModel())
                 {
-                    _logger.LogError($"CompleteCart: RabbitMQ error: {ex.Message}");
-                    return false;
+                    channel.QueueDeclare(queue: "cmd-inventory",
+                                     durable: false,
+                                     exclusive: false,
+                                     autoDelete: false,
+                                     arguments: null);
+
+                    var body = JsonSerializer.SerializeToUtf8Bytes(inventoryMessage);
+
+                    try
+                    {
+                        channel.BasicPublish(exchange: "",
+                                         routingKey: "cmd-inventory",
+                                         basicProperties: null,
+                                         body: body);
+                    }
+                    catch (RabbitMQClientException ex)
+                    {
+                        _logger.LogError($"CompleteCart: RabbitMQ error: {ex.Message}");
+                        return false;
+                    }
+
+                    _logger.LogInformation($"CompleteCart: Sent message to cmd-inventory to adjust stock for {inventoryMessage.CarId} by {inventoryMessage.StockAdjustment}");
                 }
 
-                _logger.LogInformation($"CompleteCart: Sent message to cmd-inventory to adjust stock for {inventoryMessage.CarId} by {inventoryMessage.StockAdjustment}");
+                _logger.LogInformation($"CompleteCart: Removing {inventoryMessage.CarId} from cart {cartItem.SessionId}");
+                await DeleteFromCart(cartItem.SessionId, cartItem.CarId);
             }
-
-            _logger.LogInformation($"CompleteCart: Removing {inventoryMessage.CarId} from cart {cartItem.SessionId}");
-            await DeleteFromCart(cartItem.SessionId, cartItem.CarId);
 
             return true;
         }

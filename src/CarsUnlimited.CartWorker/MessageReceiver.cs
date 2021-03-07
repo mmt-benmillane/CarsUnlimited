@@ -5,21 +5,21 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.Configuration;
 
-namespace CarsUnlimited.CartConsumer
+namespace CarsUnlimited.CartWorker
 {
     public class MessageReceiver : DefaultBasicConsumer
-
     {
-
         private readonly IModel _channel;
+        private readonly IConfiguration _configuration;
 
-        public MessageReceiver(IModel channel)
-
+        public MessageReceiver(IModel channel, IConfiguration configuration)
         {
-
             _channel = channel;
-
+            _configuration = configuration;
         }
 
         public override async void HandleBasicDeliver(string consumerTag, ulong deliveryTag, bool redelivered, string exchange, string routingKey, IBasicProperties properties, ReadOnlyMemory<byte> body)
@@ -34,11 +34,14 @@ namespace CarsUnlimited.CartConsumer
             var message = Encoding.UTF8.GetString(msgBody);
             Console.WriteLine(string.Concat("Message: ", message));
 
-            using (var client = new HttpClient())
+            var apiBaseUrl = _configuration.GetSection("CartApiUrl").Value;
+            var apiKey = _configuration.GetSection("CartApiKey").Value;
+
+            using (HttpClient client = new())
             {
-                client.BaseAddress = new Uri("http://localhost:5020/api/");
-                client.DefaultRequestHeaders.Add("X-CarsUnlimited-CartConsumerKey", "THIS_IS_MY_KEY");
-                var completeCartTask = await client.PostAsync("complete-cart", new StringContent(message, Encoding.UTF8, "application/json"));
+                client.BaseAddress = new Uri(apiBaseUrl);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-CartApiKey", apiKey);
+                var completeCartTask = await client.PostAsync("complete-cart", new StringContent(JsonSerializer.Serialize(message), Encoding.UTF8, "application/json"));
 
                 if (completeCartTask != null)
                 {

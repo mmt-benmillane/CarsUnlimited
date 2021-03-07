@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CarsUnlimited.CartAPI.Entities
+namespace CarsUnlimited.CartShared.Entities
 {
     public class CartItem
     {

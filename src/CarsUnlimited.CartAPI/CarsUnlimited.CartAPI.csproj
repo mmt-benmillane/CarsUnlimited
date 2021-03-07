@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\CarsUnlimited.CartShared\CarsUnlimited.CartShared.csproj" />
     <ProjectReference Include="..\CarsUnlimited.Shared\CarsUnlimited.Shared.csproj" />
   </ItemGroup>
 
