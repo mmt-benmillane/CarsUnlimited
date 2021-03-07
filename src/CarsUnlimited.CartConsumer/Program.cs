@@ -14,7 +14,9 @@ namespace CarsUnlimited.CartConsumer
         {
             var config = new ConfigurationBuilder()
                 .SetBasePath(Path.GetDirectoryName(Assembly.GetEntryAssembly()?.Location))
-                .AddJsonFile("appsettings.json").Build();
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables()
+                .Build();
 
             var serviceBusConfig = config.GetSection("ServiceBusConfiguration").Get<ServiceBusConfiguration>();
 

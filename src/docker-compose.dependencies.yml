@@ -28,8 +28,8 @@ services:
     volumes:
       - 'rabbitmq_data:/bitnami'
     environment:
-      RABBITMQ_USERNAME: cars
-      RABBITMQ_PASSWORD: unlimited
+      RABBITMQ_USERNAME: user
+      RABBITMQ_PASSWORD: user
 
 volumes:
   rabbitmq_data:

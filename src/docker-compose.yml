@@ -17,9 +17,6 @@ services:
       - '15672:15672'
     volumes:
       - 'rabbitmq_data:/bitnami'
-    environment:
-      RABBITMQ_USERNAME: cars
-      RABBITMQ_PASSWORD: unlimited
 
   cartdb:
    image: redis:6.2-alpine
@@ -63,6 +60,23 @@ services:
    - TracingConfiguration__JaegerEndpoint__Port=6831
    depends_on:
     - cartdb
+    - rabbitmq
+
+  cart-consumer:
+   image: ${DOCKER_REGISTRY-}cart.consumer
+   build:
+    context: .
+    dockerfile: CarsUnlimited.CartConsumer/Dockerfile
+   environment:
+   - ASPNETCORE_ENVIRONMENT=Development
+   - ServiceBusConfiguration__HostName=rabbitmq
+   - ServiceBusConfiguration__UserName=user
+   - ServiceBusConfiguration__Password=user
+   depends_on:
+    - cartdb
+    - rabbitmq
+   command: ["./wait-for-it.sh", "rabbitmq:5672"]
+
 
   purchase-api:
    image: ${DOCKER_REGISTRY-}purchase.api

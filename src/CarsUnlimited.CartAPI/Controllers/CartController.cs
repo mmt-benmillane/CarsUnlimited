@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
-using System.Linq;
+using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 
 namespace CarsUnlimited.CartAPI.Controllers
@@ -18,11 +18,13 @@ namespace CarsUnlimited.CartAPI.Controllers
     {
         private readonly ICartService _cartService;
         private readonly ILogger<CartController> _logger;
+        private readonly IConfiguration _config;
 
-        public CartController(ICartService cartService, ILogger<CartController> logger)
+        public CartController(ICartService cartService, ILogger<CartController> logger, IConfiguration configuration)
         {
             _cartService = cartService;
             _logger = logger;
+            _config = configuration;
         }
 
         [HttpPost]
@@ -100,6 +102,19 @@ namespace CarsUnlimited.CartAPI.Controllers
             }
 
             return StatusCode(404);
+        }
+
+        [HttpPost]
+        [Route("complete-cart")]
+        public async Task<IActionResult> CompleteCart([FromHeader(Name = "X-CarsUnlimited-CartConsumerKey")] string cartConsumerKey, [FromBody]CartItem cartItem)
+        {
+            if(!string.IsNullOrWhiteSpace(cartConsumerKey) && cartConsumerKey == _config.GetValue<string>("CartApiUrl"))
+            {
+                await _cartService.CompleteCart(cartItem);
+                return StatusCode(200);
+            }
+
+            return StatusCode(401);
         }
     }
 }

@@ -1,13 +1,19 @@
 ﻿using CarsUnlimited.CartAPI.Configuration;
 using CarsUnlimited.CartAPI.Entities;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using RabbitMQ.Client;
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions;
 using StackExchange.Redis.Extensions.Core.Abstractions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using RabbitMQ.Client.Exceptions;
 
 namespace CarsUnlimited.CartAPI.Services
 {
@@ -15,11 +21,13 @@ namespace CarsUnlimited.CartAPI.Services
     {
         private readonly IRedisCacheClient _redisCacheClient;
         private readonly ILogger<CartService> _logger;
+        private readonly IConfiguration _config;
 
-        public CartService(IRedisCacheClient redisCacheClient, ILogger<CartService> logger)
+        public CartService(IRedisCacheClient redisCacheClient, ILogger<CartService> logger, IConfiguration configuration)
         {
             _redisCacheClient = redisCacheClient;
             _logger = logger;
+            _config = configuration;
         }
 
         public async Task<bool> AddToCart(CartItem cartItem)
@@ -36,6 +44,56 @@ namespace CarsUnlimited.CartAPI.Services
                 _logger.LogError($"AddToCart: Redis Error: {ex.Message}");
                 return false;
             }
+        }
+
+        public async Task<bool> CompleteCart(CartItem cartItem)
+        {
+            _logger.LogInformation($"CompleteCart: Beginning complete cart action for {cartItem.SessionId} and item ID {cartItem.CarId}");
+            var serviceBusConfig = _config.GetSection("ServiceBusConfiguration").Get<ServiceBusConfiguration>();
+
+            ConnectionFactory connectionFactory = new ConnectionFactory
+            {
+                HostName = serviceBusConfig.HostName,
+                UserName = serviceBusConfig.UserName,
+                Password = serviceBusConfig.Password
+            };
+
+            InventoryMessage inventoryMessage = new InventoryMessage
+            {
+                CarId = cartItem.CarId,
+                StockAdjustment = cartItem.Count
+            };
+
+            using (var connection = connectionFactory.CreateConnection())
+            using (var channel = connection.CreateModel())
+            {
+                channel.QueueDeclare(queue: "cmd-inventory",
+                                 durable: false,
+                                 exclusive: false,
+                                 autoDelete: false,
+                                 arguments: null);
+
+                var body = JsonSerializer.SerializeToUtf8Bytes(inventoryMessage);
+
+                try
+                {
+                    channel.BasicPublish(exchange: "",
+                                     routingKey: "cmd-inventory",
+                                     basicProperties: null,
+                                     body: body);
+                } catch (RabbitMQClientException ex)
+                {
+                    _logger.LogError($"CompleteCart: RabbitMQ error: {ex.Message}");
+                    return false;
+                }
+
+                _logger.LogInformation($"CompleteCart: Sent message to cmd-inventory to adjust stock for {inventoryMessage.CarId} by {inventoryMessage.StockAdjustment}");
+            }
+
+            _logger.LogInformation($"CompleteCart: Removing {inventoryMessage.CarId} from cart {cartItem.SessionId}");
+            await DeleteFromCart(cartItem.SessionId, cartItem.CarId);
+
+            return true;
         }
 
         public async Task<bool> DeleteAllFromCart(string sessionId)
