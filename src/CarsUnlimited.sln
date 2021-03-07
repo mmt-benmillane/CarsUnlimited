@@ -11,9 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.CartAPI", "Ca
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{CE07282A-F009-41B7-B5B6-0E0AB77D583C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarsUnlimited.CartWorker", "CarsUnlimited.CartWorker\CarsUnlimited.CartWorker.csproj", "{F2896588-328F-4EC4-BA26-879A91B510EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.CartWorker", "CarsUnlimited.CartWorker\CarsUnlimited.CartWorker.csproj", "{F2896588-328F-4EC4-BA26-879A91B510EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarsUnlimited.CartShared", "CarsUnlimited.CartShared\CarsUnlimited.CartShared.csproj", "{F21A01E5-2046-4B4D-BD32-6926AA06D877}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.CartShared", "CarsUnlimited.CartShared\CarsUnlimited.CartShared.csproj", "{F21A01E5-2046-4B4D-BD32-6926AA06D877}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarsUnlimited.InventoryWorker", "CarsUnlimited.InventoryWorker\CarsUnlimited.InventoryWorker.csproj", "{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -97,6 +99,18 @@ Global
 		{F21A01E5-2046-4B4D-BD32-6926AA06D877}.Release|x64.Build.0 = Release|Any CPU
 		{F21A01E5-2046-4B4D-BD32-6926AA06D877}.Release|x86.ActiveCfg = Release|Any CPU
 		{F21A01E5-2046-4B4D-BD32-6926AA06D877}.Release|x86.Build.0 = Release|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Debug|x64.Build.0 = Debug|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Debug|x86.Build.0 = Debug|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Release|x64.ActiveCfg = Release|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Release|x64.Build.0 = Release|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Release|x86.ActiveCfg = Release|Any CPU
+		{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

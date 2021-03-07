@@ -3,6 +3,9 @@ using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using CarsUnlimited.InventoryAPI.Services;
 using CarsUnlimited.InventoryAPI.Entities;
+using CarsUnlimited.CartShared.Entities;
+using Microsoft.Extensions.Configuration;
+using System.Text.Json;
 
 namespace CarsUnlimited.InventoryAPI.Controllers
 {
@@ -12,11 +15,13 @@ namespace CarsUnlimited.InventoryAPI.Controllers
     {
         private readonly IInventoryService _inventoryService;
         private readonly ILogger<InventoryController> _logger;
+        private readonly IConfiguration _config;
 
-        public InventoryController(IInventoryService inventoryService, ILogger<InventoryController> logger)
+        public InventoryController(IInventoryService inventoryService, ILogger<InventoryController> logger, IConfiguration configuration)
         {
             _inventoryService = inventoryService;
             _logger = logger;
+            _config = configuration;
         }
 
         [HttpGet]
@@ -41,27 +46,38 @@ namespace CarsUnlimited.InventoryAPI.Controllers
         }
 
         [HttpPut("{id:length(24)}")]
-        public IActionResult UpdateStock(string id, CarItem carIn)
+        [Route("update-stock")]
+        public IActionResult UpdateStock([FromHeader(Name = "X-CarsUnlimited-InventoryApiKey")] string inventoryApiKey, InventoryMessage inventoryMessage)
         {
-            _logger.LogInformation($"UpdateStock: Looking up item {id}");
-
-            var carItem = _inventoryService.Get(id);
-
-            if (carItem is null)
+            if (!string.IsNullOrWhiteSpace(inventoryApiKey) && inventoryApiKey == _config.GetValue<string>("InventoryApiKey"))
             {
-                _logger.LogInformation($"UpdateStock: No item found with ID {id}");
-                return NotFound();
+
+                _logger.LogInformation($"UpdateStock: Looking up item {inventoryMessage.CarId}");
+
+                var carItem = _inventoryService.Get(inventoryMessage.CarId);
+
+                if (carItem is null)
+                {
+                    _logger.LogInformation($"UpdateStock: No item found with ID {inventoryMessage.CarId}");
+                    return NotFound();
+                }
+
+                carItem.CarsInStock -= inventoryMessage.StockAdjustment;
+
+                try
+                {
+                    _inventoryService.Update(carItem);
+                }
+                catch (MongoDB.Driver.MongoException ex)
+                {
+                    _logger.LogError($"UpdateStock: Error encountered attemping stock update: {ex.Message}");
+                    return StatusCode(500);
+                }
+            } 
+            else
+            {
+                return StatusCode(401);
             }
-
-            try
-            {
-                _inventoryService.Update(carIn);
-            } catch (MongoDB.Driver.MongoException ex)
-            {
-                _logger.LogError($"UpdateStock: Error encountered attemping stock update: {ex.Message}");
-                return StatusCode(500);
-            }
-
             return NoContent();
         }
     }

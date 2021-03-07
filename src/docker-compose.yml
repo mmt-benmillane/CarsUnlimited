@@ -40,8 +40,26 @@ services:
    - InventoryDatabaseSettings__ConnectionString=mongodb://inventorydb:27017
    - TracingConfiguration__JaegerEndpoint__Host=jaeger
    - TracingConfiguration__JaegerEndpoint__Port=6831
+   - InventoryApiKey=THIS_IS_MY_KEY
    depends_on:
     - inventorydb    
+
+  inventoryworker:
+   image: ${DOCKER_REGISTRY-}inventory.worker
+   build:
+    context: .
+    dockerfile: CarsUnlimited.InventoryWorker/Dockerfile
+   environment:
+   - ASPNETCORE_ENVIRONMENT=Development
+   - ServiceBusConfiguration__HostName=rabbitmq
+   - ServiceBusConfiguration__UserName=user
+   - ServiceBusConfiguration__Password=user
+   - InventoryApiKey=THIS_IS_MY_KEY
+   - InventoryApiUrl=http://inventoryapi/api/Inventory/
+   depends_on:
+    - inventorydb
+    - rabbitmq
+    - inventoryapi
 
   cartapi:
    image: ${DOCKER_REGISTRY-}cart.api

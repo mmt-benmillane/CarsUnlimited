@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using RabbitMQ.Client.Exceptions;
 using CarsUnlimited.CartShared.Entities;
 
