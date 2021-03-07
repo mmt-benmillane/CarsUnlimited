@@ -20,7 +20,7 @@ namespace CarsUnlimited.CartConsumer
 
             var serviceBusConfig = config.GetSection("ServiceBusConfiguration").Get<ServiceBusConfiguration>();
 
-            ConnectionFactory connectionFactory = new ConnectionFactory
+            ConnectionFactory connectionFactory = new()
             {
                 HostName = serviceBusConfig.HostName,
                 UserName = serviceBusConfig.UserName,
@@ -38,7 +38,7 @@ namespace CarsUnlimited.CartConsumer
 
                 channel.BasicQos(0, 1, false);
 
-                MessageReceiver messageReceiver = new MessageReceiver(channel);
+                MessageReceiver messageReceiver = new(channel);
 
                 channel.BasicConsume("cmd-cart", false, messageReceiver);
 
