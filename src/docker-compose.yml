@@ -60,7 +60,7 @@ services:
    - TracingConfiguration__JaegerEndpoint__Port=6831
    - ServiceBusConfiguration__HostName=rabbitmq
    - ServiceBusConfiguration__UserName=user
-   - ServiceBusConfiguration__Password=bitnami
+   - ServiceBusConfiguration__Password=user
    - CartApiKey=THIS_IS_MY_KEY
    depends_on:
     - cartdb
@@ -76,9 +76,9 @@ services:
    - ASPNETCORE_ENVIRONMENT=Development
    - ServiceBusConfiguration__HostName=rabbitmq
    - ServiceBusConfiguration__UserName=user
-   - ServiceBusConfiguration__Password=bitnami
+   - ServiceBusConfiguration__Password=user
    - CartApiKey=THIS_IS_MY_KEY
-   - CartApiUrl=http://cartapi:5020/api/Cart/
+   - CartApiUrl=http://cartapi/api/Cart/
    depends_on:
     - cartdb
     - rabbitmq
@@ -90,7 +90,7 @@ services:
     context: CarsUnlimited-Purchase-API
     dockerfile: Dockerfile
    environment:
-    - SERVICE_BUS_CONNECTION_STRING=amqp://user:bitnami@rabbitmq:5672/
+    - SERVICE_BUS_CONNECTION_STRING=amqp://user:user@rabbitmq:5672/
    ports:
     - 5030:8080
    depends_on:
