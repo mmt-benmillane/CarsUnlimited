@@ -120,7 +120,6 @@ services:
     - cartdb
     - rabbitmq
 
-
   cartworker:
    image: ${DOCKER_REGISTRY-}cart.worker
    build:
