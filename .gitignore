@@ -370,3 +370,6 @@ appsettings.*.json
 modules/
 
 .docker/
+
+dbdata/
+kongadata/

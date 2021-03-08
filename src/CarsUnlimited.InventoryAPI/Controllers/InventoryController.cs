@@ -45,7 +45,7 @@ namespace CarsUnlimited.InventoryAPI.Controllers
             return carItem;
         }
 
-        [HttpPut("{id:length(24)}")]
+        [HttpPut]
         [Route("update-stock")]
         public IActionResult UpdateStock([FromHeader(Name = "X-CarsUnlimited-InventoryApiKey")] string inventoryApiKey, InventoryMessage inventoryMessage)
         {

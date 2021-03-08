@@ -9,14 +9,14 @@ services:
       - "16686:16686"
 
   rabbitmq:
-    image: 'docker.io/bitnami/rabbitmq:3.8-debian-10'
+    image: 'docker.io/bitnami/rabbitmq:3.8.13'
     ports:
       - '4369:4369'
       - '5672:5672'
       - '25672:25672'
       - '15672:15672'
     volumes:
-      - 'rabbitmq_data:/bitnami'
+      - 'rabbitmq-data:/bitnami'
 
   cartdb:
    image: redis:6.2-alpine
@@ -28,41 +28,77 @@ services:
    ports:
    - 27017:27017
 
-  kongdb:
-    image: docker.io/bitnami/postgresql:11-debian-10
-    volumes:
-      - postgresql_data:/bitnami/postgresql
+  kong-migrations:
+    image: "${KONG_DOCKER_TAG:-kong:latest}"
+    command: kong migrations bootstrap
+    depends_on:
+      - kongdb
     environment:
-      - POSTGRESQL_USERNAME=kong
-      - POSTGRESQL_PASSWORD=bitnami
-      - POSTGRESQL_DATABASE=kong
-  kong:
-    image: docker.io/bitnami/kong:2-debian-10
-    ports:
-      - 8000:8000
-      - 8443:8443
-    environment:
-      - KONG_MIGRATE=yes
-      - KONG_PG_HOST=kongdb
-      - KONG_PG_PASSWORD=bitnami
+      KONG_DATABASE: postgres
+      KONG_PG_DATABASE: ${KONG_PG_DATABASE:-kong}
+      KONG_PG_HOST: kongdb
+      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-kong}
+      KONG_PG_USER: ${KONG_PG_USER:-kong}
+    links:
+      - kongdb:kongdb
+    restart: on-failure
 
   konga:
-      image: pantsel/konga
-      environment:
-        TOKEN_SECRET: some-secret-token
-        DB_ADAPTER: postgres
-        DB_HOST: kongdb
-        DB_PORT: 8000
-        DB_DATABASE: kong
-        DB_USER: kong
-        DB_PASSWORD: bitnami
-        NODE_ENV: production
-        KONGA_HOOK_TIMEOUT: 10000
-      restart: on-failure
-      ports:
-      - 9000:1337
-      depends_on:
+    image: pantsel/konga
+    container_name: konga
+    depends_on:
+      - kong
+    environment:
+      NODE_ENV: production
+    links:
+      - kong:kong
+    ports:
+      - "1337:1337/tcp"
+    restart: on-failure
+    volumes:
+      - ./kongadata:/app/kongadata
+
+  kong:
+    image: "${KONG_DOCKER_TAG:-kong:latest}"
+    container_name: kong
+    user: "${KONG_USER:-root}"
+    depends_on:
       - kongdb
+    environment:
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: '0.0.0.0:8001'
+      KONG_CASSANDRA_CONTACT_POINTS: kongdb
+      KONG_DATABASE: postgres
+      KONG_PG_DATABASE: ${KONG_PG_DATABASE:-kong}
+      KONG_PG_HOST: kongdb
+      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-kong}
+      KONG_PG_USER: ${KONG_PG_USER:-kong}
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+    ports:
+      - "8000:8000/tcp"
+      - "8001:8001/tcp"
+      - "8443:8443/tcp"
+      - "8444:8444/tcp"
+    restart: on-failure
+
+  kongdb:
+    image: postgres:9.5
+    environment:
+      POSTGRES_DB: ${KONG_PG_DATABASE:-kong}
+      POSTGRES_PASSWORD: ${KONG_PG_PASSWORD:-kong}
+      POSTGRES_USER: ${KONG_PG_USER:-kong}
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${KONG_PG_USER:-kong}"]
+      interval: 30s
+      timeout: 30s
+      retries: 3
+    restart: on-failure
+    stdin_open: true
+    tty: true
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
 
   inventoryapi:
    image: ${DOCKER_REGISTRY-}inventory.api
@@ -89,13 +125,14 @@ services:
    - ASPNETCORE_ENVIRONMENT=Development
    - ServiceBusConfiguration__HostName=rabbitmq
    - ServiceBusConfiguration__UserName=user
-   - ServiceBusConfiguration__Password=user
+   - ServiceBusConfiguration__Password=bitnami
    - InventoryApiKey=THIS_IS_MY_KEY
    - InventoryApiUrl=http://inventoryapi/api/Inventory/
    depends_on:
     - inventorydb
     - rabbitmq
     - inventoryapi
+   restart: on-failure
 
   cartapi:
    image: ${DOCKER_REGISTRY-}cart.api
@@ -114,7 +151,7 @@ services:
    - TracingConfiguration__JaegerEndpoint__Port=6831
    - ServiceBusConfiguration__HostName=rabbitmq
    - ServiceBusConfiguration__UserName=user
-   - ServiceBusConfiguration__Password=user
+   - ServiceBusConfiguration__Password=bitnami
    - CartApiKey=THIS_IS_MY_KEY
    depends_on:
     - cartdb
@@ -129,13 +166,14 @@ services:
    - ASPNETCORE_ENVIRONMENT=Development
    - ServiceBusConfiguration__HostName=rabbitmq
    - ServiceBusConfiguration__UserName=user
-   - ServiceBusConfiguration__Password=user
+   - ServiceBusConfiguration__Password=bitnami
    - CartApiKey=THIS_IS_MY_KEY
    - CartApiUrl=http://cartapi/api/Cart/
    depends_on:
     - cartdb
     - rabbitmq
     - cartapi
+   restart: on-failure
 
   purchaseapi:
    image: ${DOCKER_REGISTRY-}purchase.api
@@ -143,14 +181,14 @@ services:
     context: CarsUnlimited-Purchase-API
     dockerfile: Dockerfile
    environment:
-    - SERVICE_BUS_CONNECTION_STRING=amqp://user:user@rabbitmq:5672/
+    - SERVICE_BUS_CONNECTION_STRING=amqp://user:bitnami@rabbitmq:5672/
    ports:
     - 5030:8080
    depends_on:
     - rabbitmq
 
 volumes:
-  rabbitmq_data:
+  rabbitmq-data:
     driver: local
   postgresql_data:
     driver: local
