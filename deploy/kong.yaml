@@ -1,0 +1,161 @@
+_format_version: "1.1"
+services:
+- connect_timeout: 60000
+  host: cartapi
+  name: cart
+  port: 80
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  write_timeout: 60000
+  routes:
+  - name: add-to-cart
+    methods:
+    - POST
+    paths:
+    - /api/cart/add-to-cart
+    path_handling: v1
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    strip_path: false
+    https_redirect_status_code: 426
+  - name: complete-cart
+    methods:
+    - POST
+    paths:
+    - /api/cart/complete-cart
+    path_handling: v1
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    strip_path: false
+    https_redirect_status_code: 426
+  - name: delete-cart
+    methods:
+    - GET
+    paths:
+    - /api/cart/delete-cart
+    path_handling: v1
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    strip_path: false
+    https_redirect_status_code: 426
+  - name: delete-item-from-cart
+    methods:
+    - GET
+    paths:
+    - /api/cart/delete-item-from-cart
+    path_handling: v1
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    strip_path: false
+    https_redirect_status_code: 426
+  - name: get-cart-items
+    methods:
+    - GET
+    paths:
+    - /api/cart/get-cart-items
+    path_handling: v1
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    strip_path: false
+    https_redirect_status_code: 426
+  - name: get-cart-items-count
+    methods:
+    - GET
+    paths:
+    - /api/cart/get-cart-items-count
+    path_handling: v1
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    strip_path: false
+    https_redirect_status_code: 426
+- connect_timeout: 60000
+  host: inventoryapi
+  name: inventory
+  port: 80
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  write_timeout: 60000
+  routes:
+  - name: get-inventory
+    methods:
+    - GET
+    paths:
+    - /api/inventory
+    path_handling: v1
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 100
+    strip_path: false
+    https_redirect_status_code: 426
+  - headers:
+      X-CarsUnlimited-InventoryApiKey:
+      - THIS_IS_MY_KEY
+    name: update-stock
+    methods:
+    - PUT
+    paths:
+    - /api/inventory/update-stock
+    path_handling: v1
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 10
+    strip_path: false
+    https_redirect_status_code: 426
+    plugins:
+    - name: ip-restriction
+      config:
+        allow:
+        - 192.168.65.0/28
+        deny: null
+      enabled: true
+      protocols:
+      - grpc
+      - grpcs
+      - http
+      - https
+- connect_timeout: 60000
+  host: purchaseapi
+  name: purchase
+  port: 80
+  protocol: http
+  read_timeout: 60000
+  retries: 5
+  write_timeout: 60000
+  routes:
+  - name: complete-purchase
+    methods:
+    - POST
+    paths:
+    - /api/purchase/
+    path_handling: v1
+    preserve_host: false
+    protocols:
+    - http
+    - https
+    regex_priority: 0
+    strip_path: false
+    https_redirect_status_code: 426
