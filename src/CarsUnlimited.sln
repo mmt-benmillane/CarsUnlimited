@@ -17,7 +17,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.CartShared", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.InventoryWorker", "CarsUnlimited.InventoryWorker\CarsUnlimited.InventoryWorker.csproj", "{9A959EFC-5ED4-4B34-9892-AA4ED0478AFD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarsUnlimited.Web", "CarsUnlimited.Web\CarsUnlimited.Web.csproj", "{C13BA7EE-234C-40F4-AD83-DD63877D0ECA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.Web", "CarsUnlimited.Web\CarsUnlimited.Web.csproj", "{C13BA7EE-234C-40F4-AD83-DD63877D0ECA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarsUnlimited.InventoryShared", "CarsUnlimited.InventoryShared\CarsUnlimited.InventoryShared.csproj", "{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,6 +127,18 @@ Global
 		{C13BA7EE-234C-40F4-AD83-DD63877D0ECA}.Release|x64.Build.0 = Release|Any CPU
 		{C13BA7EE-234C-40F4-AD83-DD63877D0ECA}.Release|x86.ActiveCfg = Release|Any CPU
 		{C13BA7EE-234C-40F4-AD83-DD63877D0ECA}.Release|x86.Build.0 = Release|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Debug|x64.Build.0 = Debug|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Debug|x86.Build.0 = Debug|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Release|x64.ActiveCfg = Release|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Release|x64.Build.0 = Release|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Release|x86.ActiveCfg = Release|Any CPU
+		{2A623B8A-D092-4C57-A15C-FE8EBF5A513B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
