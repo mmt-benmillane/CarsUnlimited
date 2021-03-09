@@ -7,6 +7,7 @@ services:
     ports:
       - "6831:6831/udp"
       - "16686:16686"
+      - "9411:9411"
 
   rabbitmq:
     image: 'docker.io/bitnami/rabbitmq:3.8.13'
@@ -186,6 +187,18 @@ services:
     - 5030:8080
    depends_on:
     - rabbitmq
+
+  webui:
+   image: ${DOCKER_REGISTRY-}web
+   build:
+    context: .
+    dockerfile: CarsUnlimited.Web/Dockerfile
+   environment:
+   - ASPNETCORE_ENVIRONMENT=Development
+   ports:
+    - 5000:80
+   depends_on:
+    - kong
 
 volumes:
   rabbitmq-data:

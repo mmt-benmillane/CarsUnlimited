@@ -1,17 +1,16 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
 
-    <div class="main">
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+<NavMenu />
 
-        <div class="content px-4">
-            @Body
-        </div>
-    </div>
-</div>
+
+
+<main role="main" class="container">
+
+    @Body
+
+    <footer class="container">
+        <p class="float-end"><a href="#">Back to top</a></p>
+        <p>&copy; @DateTime.Now.Year Cars Unlimited, Ltd. &middot; <a href="#">Privacy</a> &middot; <a href="#">Terms</a></p>
+    </footer>
+</main><!-- /.container -->
