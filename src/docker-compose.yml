@@ -27,8 +27,8 @@ services:
   inventorydb:
     container_name: mongodb
     build:
-      context: "CarsUnlimited.InventoryAPI/Mongo/"
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: CarsUnlimited.InventoryAPI/Mongo/Dockerfile
     ports:
     - 27017:27017
 
@@ -197,17 +197,33 @@ services:
     context: .
     dockerfile: CarsUnlimited.Web/Dockerfile
    environment:
-   - ASPNETCORE_ENVIRONMENT=Development
-   - TracingConfiguration__JaegerEndpoint__Host=jaeger
-   - TracingConfiguration__JaegerEndpoint__Port=6831
-   - ApiGatewayUrl=http://kong:8000/
-   - ApiKey=CHANGE_ME
-   - CartApiKey=THIS_IS_MY_KEY
-   - InventoryApiKey=THIS_IS_MY_KEY
+    - ASPNETCORE_ENVIRONMENT=Development
+    - TracingConfiguration__JaegerEndpoint__Host=jaeger
+    - TracingConfiguration__JaegerEndpoint__Port=6831
+    - ApiGatewayUrl=http://kong:8000/
+    - ApiKey=CHANGE_ME
+    - CartApiKey=THIS_IS_MY_KEY
+    - InventoryApiKey=THIS_IS_MY_KEY
    ports:
     - 5000:80
    depends_on:
     - kong
+
+  # reverse:
+  #   build:
+  #     context: CarsUnlimited.ReverseProxy
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - 80:80
+  #   volumes:
+  #     - ./reverse-proxy/html:/usr/share/nginx/html
+  #     - ./reverse-proxy/conf:/etc/nginx
+  #   depends_on:
+  #     - webui
+  #     - konga
+  #     - rabbitmq
+  #     - inventoryapi
+  #     - inventoryworker
 
 volumes:
   rabbitmq-data:
