@@ -27,7 +27,7 @@ namespace CarsUnlimited.Web.Data
 
         public async Task<bool> AddToCartAsync(string sessionId, string carId, int quantity)
         {
-            _logger.LogInformation($"Begin AddToCart for session {sessionId}");                        
+            _logger.LogInformation($"Begin AddToCart for session {sessionId}");
 
             CartItem cartItem = new CartItem
             {
@@ -36,7 +36,7 @@ namespace CarsUnlimited.Web.Data
                 Count = quantity
             };
 
-            using(HttpClient client = new())
+            using (HttpClient client = new())
             {
                 client.BaseAddress = new Uri(_apiBaseUrl);
                 client.DefaultRequestHeaders.Add("X-CarsUnlimited-CartApiKey", _apiKey);
@@ -45,18 +45,19 @@ namespace CarsUnlimited.Web.Data
                 try
                 {
                     var cartTask = await client.PostAsJsonAsync("api/cart/add-to-cart", cartItem);
-                    
-                    if(cartTask.IsSuccessStatusCode)
+
+                    if (cartTask.IsSuccessStatusCode)
                     {
                         _logger.LogInformation($"Added {cartItem.Count} of item {cartItem.CarId} to cart for session {cartItem.SessionId}");
                         return true;
-                    } 
+                    }
                     else
                     {
                         _logger.LogError($"Error: Failed to add item to cart for session {cartItem.SessionId}");
                         return false;
                     }
-                } catch (HttpRequestException ex)
+                }
+                catch (HttpRequestException ex)
                 {
                     _logger.LogError($"Error: Encountered exception attempting to add item to cart for session {cartItem.SessionId}. Error: {ex.Message}");
                     return false;
@@ -141,6 +142,38 @@ namespace CarsUnlimited.Web.Data
                 catch (HttpRequestException ex)
                 {
                     _logger.LogError($"Error: Encountered exception attempting to delete item from cart for session {sessionId}. Error: {ex.Message}");
+                    return false;
+                }
+            }
+        }
+
+        public async Task<bool> DeleteCart(string sessionId)
+        {
+            _logger.LogInformation($"Deleting cart for session {sessionId}");
+
+            using (HttpClient client = new())
+            {
+                client.BaseAddress = new Uri(_apiBaseUrl);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-CartApiKey", _apiKey);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-SessionId", sessionId);
+
+                try
+                {
+                    var cartTask = await client.GetAsync($"api/cart/delete-cart");
+
+                    if (cartTask.IsSuccessStatusCode)
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+                catch (HttpRequestException ex)
+                {
+                    _logger.LogError($"Error: Encountered exception attempting to delete cart for session {sessionId}. Error: {ex.Message}");
                     return false;
                 }
             }

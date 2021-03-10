@@ -52,7 +52,7 @@ services:
     methods:
     - GET
     paths:
-    - /api/cart/delete-item-from-cart
+    - /api/cart/delete-item-from-cart/
     path_handling: v1
     preserve_host: false
     protocols:
@@ -140,7 +140,7 @@ services:
 - connect_timeout: 60000
   host: purchaseapi
   name: purchase
-  port: 80
+  port: 8080
   protocol: http
   read_timeout: 60000
   retries: 5
@@ -159,3 +159,7 @@ services:
     regex_priority: 0
     strip_path: false
     https_redirect_status_code: 426
+consumers:
+- username: web-ui
+  keyauth_credentials:
+  - key: r9wsnS605clkJoZRuNKO97UQNhj5be3e

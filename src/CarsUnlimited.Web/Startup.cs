@@ -86,6 +86,7 @@ namespace CarsUnlimited.Web
             services.AddServerSideBlazor();
             services.AddSingleton<InventoryService>();
             services.AddSingleton<CartService>();
+            services.AddSingleton<PurchaseService>();
 
             services.AddBlazoredToast();
         }
