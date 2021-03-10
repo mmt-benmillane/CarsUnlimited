@@ -50,12 +50,14 @@ else
     {
         var sessionId = await storage.GetAsync<string>("SessionId");
 
-        bool cartResult = await CartService.AddToCart(sessionId.Value, carId, quantity);
+        bool cartResult = await CartService.AddToCartAsync(sessionId.Value, carId, quantity);
 
         if (cartResult)
         {
             toastService.ShowSuccess("Added item to cart");
             Console.WriteLine("Added item to cart");
+
+            StateHasChanged();
         }
         else
         {

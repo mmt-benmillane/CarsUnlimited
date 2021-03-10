@@ -14,19 +14,20 @@ namespace CarsUnlimited.Web.Data
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<CartService> _logger;
+        private readonly string _apiBaseUrl;
+        private readonly string _apiKey;
 
         public CartService(IConfiguration configuration, ILogger<CartService> logger)
         {
             _configuration = configuration;
             _logger = logger;
+            _apiBaseUrl = _configuration.GetSection("ApiGatewayUrl").Value;
+            _apiKey = _configuration.GetSection("CartApiKey").Value;
         }
 
-        public async Task<bool> AddToCart(string sessionId, string carId, int quantity)
+        public async Task<bool> AddToCartAsync(string sessionId, string carId, int quantity)
         {
-            _logger.LogInformation($"Begin AddToCart for session {sessionId}");
-
-            var apiBaseUrl = $"{_configuration.GetSection("ApiGatewayUrl").Value}";
-            var apiKey = _configuration.GetSection("CartApiKey").Value;
+            _logger.LogInformation($"Begin AddToCart for session {sessionId}");                        
 
             CartItem cartItem = new CartItem
             {
@@ -37,8 +38,8 @@ namespace CarsUnlimited.Web.Data
 
             using(HttpClient client = new())
             {
-                client.BaseAddress = new Uri(apiBaseUrl);
-                client.DefaultRequestHeaders.Add("X-CarsUnlimited-CartApiKey", apiKey);
+                client.BaseAddress = new Uri(_apiBaseUrl);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-CartApiKey", _apiKey);
                 client.DefaultRequestHeaders.Add("X-CarsUnlimited-SessionId", sessionId);
 
                 try
@@ -59,6 +60,63 @@ namespace CarsUnlimited.Web.Data
                 {
                     _logger.LogError($"Error: Encountered exception attempting to add item to cart for session {cartItem.SessionId}. Error: {ex.Message}");
                     return false;
+                }
+            }
+        }
+
+        public async Task<List<CartItem>> GetItemsInCartAsync(string sessionId)
+        {
+            _logger.LogInformation($"Getting cart for session {sessionId}");
+
+            using (HttpClient client = new())
+            {
+                client.BaseAddress = new Uri(_apiBaseUrl);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-CartApiKey", _apiKey);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-SessionId", sessionId);
+
+                try
+                {
+                    var cartTask = await client.GetFromJsonAsync<List<CartItem>>("api/cart/get-cart-items");
+
+                    if (cartTask.Any())
+                    {
+                        return cartTask;
+                    }
+                    else
+                    {
+                        _logger.LogError($"Error: Failed to get cart for session {sessionId}");
+                        return new List<CartItem>();
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    _logger.LogError($"Error: Encountered exception attempting to get cart for session {sessionId}. Error: {ex.Message}");
+                    return new List<CartItem>();
+                }
+            }
+        }
+
+        public async Task<int> GetItemsInCartCountAsync(string sessionId)
+        {
+            _logger.LogInformation($"Getting cart item count for session {sessionId}");
+
+            using (HttpClient client = new())
+            {
+                client.BaseAddress = new Uri(_apiBaseUrl);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-CartApiKey", _apiKey);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-SessionId", sessionId);
+
+                try
+                {
+                    var cartTask = await client.GetFromJsonAsync<int>("api/cart/get-cart-items-count");
+
+                    return cartTask;
+
+                }
+                catch (HttpRequestException ex)
+                {
+                    _logger.LogError($"Error: Encountered exception attempting to get cart count for session {sessionId}. Error: {ex.Message}");
+                    return 0;
                 }
             }
         }

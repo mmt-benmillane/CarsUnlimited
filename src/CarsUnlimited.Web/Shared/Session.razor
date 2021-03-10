@@ -4,18 +4,11 @@
 @code {
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if(firstRender)
+        var sessionId = await storage.GetAsync<string>("SessionId");
+
+        if (string.IsNullOrWhiteSpace(sessionId.Value))
         {
             await GenerateSession();
-        }
-        else
-        {
-            var sessionId = await storage.GetAsync<string>("SessionId");
-
-            if (string.IsNullOrWhiteSpace(sessionId.Value))
-            {
-                await GenerateSession();
-            }
         }
 
     }
