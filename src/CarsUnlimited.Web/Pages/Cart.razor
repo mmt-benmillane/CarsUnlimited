@@ -1,0 +1,54 @@
+﻿@page "/cart"
+@using CarsUnlimited.CartShared.Entities
+@using CarsUnlimited.Web.Components
+
+@using CarsUnlimited.Web.Data
+@inject CartService CartService
+
+@inject ProtectedSessionStorage storage
+
+<h3>Cart (@CartItemCount items)</h3>
+
+@if (CartItemCount == 0)
+{
+    <p><em>There are no items in your cart</em></p>
+}
+else
+{
+
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col"></th>
+            <th scope="col" class="col-md-7">Item</th>
+            <th scope="col" class="col-md-1">Quantity</th>
+            <th scope="col" class="col-md-1">Price</th>
+            <th scope="col" class="col-md-1"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in CartItems)
+        {
+            <CartItem CarId="@item.CarId" Quantity="@item.Count" />
+        }
+    </tbody>
+</table>
+
+}
+
+@code {
+    public int CartItemCount { get; set; } = 0;
+
+    public List<CartShared.Entities.CartItem> CartItems { get; set; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        var sessionId = await storage.GetAsync<string>("SessionId");
+
+        CartItemCount = await CartService.GetItemsInCartCountAsync(sessionId.Value);
+
+        CartItems = await CartService.GetItemsInCartAsync(sessionId.Value);
+
+        StateHasChanged();
+    }
+}

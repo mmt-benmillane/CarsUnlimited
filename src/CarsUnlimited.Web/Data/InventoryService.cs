@@ -15,24 +15,25 @@ namespace CarsUnlimited.Web.Data
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<InventoryService> _logger;
+        private readonly string _apiBaseUrl;
+        private readonly string _apiKey;
 
         public InventoryService(IConfiguration configuration, ILogger<InventoryService> logger)
         {
             _configuration = configuration;
             _logger = logger;
+            _apiBaseUrl = _configuration.GetSection("ApiGatewayUrl").Value;
+            _apiKey = _configuration.GetSection("ApiKey").Value;
         }
 
         public async Task<List<CarItem>> GetInventoryAsync()
         {
             _logger.LogInformation("Begin GetInventoryAsync");
 
-            var apiBaseUrl = $"{_configuration.GetSection("ApiGatewayUrl").Value}";
-            var apiKey = _configuration.GetSection("ApiKey").Value;
-
             using(HttpClient client = new())
             {
-                client.BaseAddress = new Uri(apiBaseUrl);
-                client.DefaultRequestHeaders.Add("X-CarsUnlimited-ApiKey", apiKey);
+                client.BaseAddress = new Uri(_apiBaseUrl);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-ApiKey", _apiKey);
 
                 try
                 {
@@ -52,6 +53,37 @@ namespace CarsUnlimited.Web.Data
                 {
                     _logger.LogError($"Error retrieving inventory. Error: {ex.Message}");
                     return new List<CarItem>();
+                }
+            }
+        }
+
+        public async Task<CarItem> GetInventoryItemByIdAsync(string id)
+        {
+            _logger.LogInformation("Begin GetInventoryAsync");
+
+            using (HttpClient client = new())
+            {
+                client.BaseAddress = new Uri(_apiBaseUrl);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-ApiKey", _apiKey);
+
+                try
+                {
+                    var inventoryTask = await client.GetFromJsonAsync<CarItem>($"api/inventory/{id}");
+
+                    if (inventoryTask != null)
+                    {                        
+                        return inventoryTask;
+                    }
+                    else
+                    {
+                        _logger.LogError($"Error retrieving inventory item. No content");
+                        return new CarItem();
+                    }
+                }
+                catch (HttpRequestException ex)
+                {
+                    _logger.LogError($"Error retrieving inventory item. Error: {ex.Message}");
+                    return new CarItem();
                 }
             }
         }
