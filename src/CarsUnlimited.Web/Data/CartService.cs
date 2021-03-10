@@ -120,5 +120,30 @@ namespace CarsUnlimited.Web.Data
                 }
             }
         }
+
+        public async Task<bool> DeleteFromCartByIdAsync(string sessionId, string carId)
+        {
+            _logger.LogInformation($"Deleting item {carId} from cart for session {sessionId}");
+
+            using (HttpClient client = new())
+            {
+                client.BaseAddress = new Uri(_apiBaseUrl);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-CartApiKey", _apiKey);
+                client.DefaultRequestHeaders.Add("X-CarsUnlimited-SessionId", sessionId);
+
+                try
+                {
+                    var cartTask = await client.GetFromJsonAsync<bool>($"api/cart/delete-item-from-cart/?carId={carId}");
+
+                    return cartTask;
+
+                }
+                catch (HttpRequestException ex)
+                {
+                    _logger.LogError($"Error: Encountered exception attempting to delete item from cart for session {sessionId}. Error: {ex.Message}");
+                    return false;
+                }
+            }
+        }
     }
 }

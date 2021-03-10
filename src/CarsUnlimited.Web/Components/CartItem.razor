@@ -1,6 +1,10 @@
 ﻿@using CarsUnlimited.InventoryShared.Entities
 @using CarsUnlimited.Web.Data
 @inject InventoryService InventoryService
+@inject CartService CartService
+
+@inject ProtectedSessionStorage storage
+@inject IToastService toastService
 
 @if (car == null)
 {
@@ -10,7 +14,7 @@ else
 {
     <tr>
         <td scope="col" style="overflow:hidden; width:200px;">
-            <img src="@car.CarPicture" width="200"/>
+            <img src="@car.CarPicture" width="200" />
         </td>
         <td scope="col" class="col-md-7">
             <strong>@car.CarManufacturer @car.CarModel</strong>
@@ -26,7 +30,7 @@ else
             &pound; @string.Format("{0:N2}", (Quantity * car.CarPrice))
         </td>
         <td scope="col" class="col-md-1">
-            <button class="btn btn-danger">Remove</button>
+            <button class="btn btn-danger" @onclick="@(e => RemoveFromCart(e, car.Id))">Remove</button>
         </td>
     </tr>
 }
@@ -46,5 +50,22 @@ else
         car = await InventoryService.GetInventoryItemByIdAsync(CarId);
 
         StateHasChanged();
+    }
+
+    public async Task RemoveFromCart(MouseEventArgs e, string id)
+    {
+        var sessionId = await storage.GetAsync<string>("SessionId");
+        var removeTask = await CartService.DeleteFromCartByIdAsync(sessionId.Value, id);
+
+        if(removeTask)
+        {
+            toastService.ShowInfo("Item removed from cart");
+            StateHasChanged();
+        } 
+        else
+        {
+            toastService.ShowError("Couldn't remove item from cart");
+            StateHasChanged();
+        }
     }
 }
