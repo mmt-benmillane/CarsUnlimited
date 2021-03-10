@@ -24,7 +24,7 @@
                 </li>
                 <li class="nav-item">
                     <NavLink class="nav-link" href="cart">
-                        Cart (@CartItemCount)
+                        Cart 
                     </NavLink>
                 </li>
             </ul>
@@ -33,14 +33,5 @@
 </div>
 
 @code {
-    public int CartItemCount { get; set; } = 0;
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        var sessionId = await storage.GetAsync<string>("SessionId");
-
-        CartItemCount = await CartService.GetItemsInCartCountAsync(sessionId.Value);
-
-        StateHasChanged();
-    }
 }
