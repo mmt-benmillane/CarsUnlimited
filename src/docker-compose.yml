@@ -27,7 +27,7 @@ services:
   inventorydb:
     container_name: mongodb
     build:
-      context: "./CarsUnlimited.InventoryAPI/Mongo/"
+      context: "CarsUnlimited.InventoryAPI/Mongo/"
       dockerfile: Dockerfile
     ports:
     - 27017:27017
