@@ -209,21 +209,21 @@ services:
     depends_on:
       - kong
 
-  # reverse:
-  #   build:
-  #     context: CarsUnlimited.ReverseProxy
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - 80:80
-  #   volumes:
-  #     - ./reverse-proxy/html:/usr/share/nginx/html
-  #     - ./reverse-proxy/conf:/etc/nginx
-  #   depends_on:
-  #     - webui
-  #     - konga
-  #     - rabbitmq
-  #     - inventoryapi
-  #     - inventoryworker
+  reverse:
+    build:
+      context: CarsUnlimited.ReverseProxy
+      dockerfile: Dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - ./CarsUnlimited.ReverseProxy/html:/usr/share/nginx/html
+      - ./CarsUnlimited.ReverseProxy/conf:/etc/nginx
+    depends_on:
+      - webui
+      - konga
+      - rabbitmq
+      - inventoryapi
+      - inventoryworker
 
 volumes:
   rabbitmq-data:
