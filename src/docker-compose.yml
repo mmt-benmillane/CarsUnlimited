@@ -199,6 +199,8 @@ services:
    - TracingConfiguration__JaegerEndpoint__Port=6831
    - ApiGatewayUrl=http://kong:8000/
    - ApiKey=CHANGE_ME
+   - CartApiKey=THIS_IS_MY_KEY
+   - InventoryApiKey=THIS_IS_MY_KEY
    ports:
     - 5000:80
    depends_on:

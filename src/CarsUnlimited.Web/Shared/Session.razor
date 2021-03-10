@@ -1,0 +1,29 @@
+﻿@inject ProtectedSessionStorage storage
+
+
+@code {
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if(firstRender)
+        {
+            await GenerateSession();
+        }
+        else
+        {
+            var sessionId = await storage.GetAsync<string>("SessionId");
+
+            if (string.IsNullOrWhiteSpace(sessionId.Value))
+            {
+                await GenerateSession();
+            }
+        }
+
+    }
+
+    async Task GenerateSession()
+    {
+        var newSessionId = Guid.NewGuid().ToString();
+
+        await storage.SetAsync("SessionId", newSessionId);
+    }
+}

@@ -1,6 +1,7 @@
-﻿namespace CarsUnlimited.InventoryShared.Entities
+﻿
+namespace CarsUnlimited.InventoryShared.Entities
 {
-    public class CarItem
+    public class CarItem 
     {
         public string CarPicture { get; set; }
         public string CarManufacturer { get; set; }
@@ -8,5 +9,6 @@
         public string CarInfo { get; set; }
         public double CarPrice { get; set; }
         public int CarsInStock { get; set; }
+        public string Id { get; set; }
     }
 }

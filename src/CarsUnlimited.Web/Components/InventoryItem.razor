@@ -1,42 +1,62 @@
 ﻿@using CarsUnlimited.InventoryShared.Entities
- 
-@if(CarItem == null)
+
+@using CarsUnlimited.Web.Data
+@inject CartService CartService
+
+@inject ProtectedSessionStorage storage
+
+@if (CarItem == null)
 {
     <p><em>Loading...</em></p>
 }
 else
 {
-    
-        <div class="col-md-4">
-            <div class="card mb-4 shadow-sm">
-                <div class="card-header">
-                    @CarItem.CarManufacturer @CarItem.CarModel
-                </div>
-                <div class="card-img-top" style="overflow-x: hidden;">
-                    <img src="@CarItem.CarPicture" height="250" />
-                </div>
-                <div class="card-body">
 
-                    <p class="card-text">
-                        @CarItem.CarInfo
-                    </p>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mb-4 ml-4 mr-4">
-                    @if (CarItem.CarsInStock > 0)
-                    {
-                        <button class="btn btn-primary btn-sm">Add to Cart</button>
-                    }
-                    else
-                    {
-                        <button class="btn btn-danger disabled btn-sm" disabled>Out of Stock</button>
-                    }
-                    <span class="text-info">&pound; @String.Format("{0:N2}", CarItem.CarPrice)</span>
-                </div>
+    <div class="col-md-4">
+        <div class="card mb-4 shadow-sm">
+            <div class="card-header">
+                @CarItem.CarManufacturer @CarItem.CarModel
+            </div>
+            <div class="card-img-top" style="overflow-x: hidden;">
+                <img src="@CarItem.CarPicture" height="250" />
+            </div>
+            <div class="card-body">
+
+                <p class="card-text">
+                    @CarItem.CarInfo
+                </p>
+            </div>
+            <div class="d-flex justify-content-between align-items-center mb-4 ml-4 mr-4">
+                @if (CarItem.CarsInStock > 0)
+                {
+                    <button class="btn btn-primary btn-sm" @onclick="@(e => AddToCart(e, CarItem.Id, 1))">Add to Cart</button>
+                }
+                else
+                {
+                    <button class="btn btn-danger disabled btn-sm" disabled>Out of Stock</button>
+                }
+                <span class="text-info">&pound; @String.Format("{0:N2}", CarItem.CarPrice)</span>
             </div>
         </div>
+    </div>
 }
 
 @code {
     [Parameter]
     public CarItem CarItem { get; set; }
+
+    public async Task AddToCart(MouseEventArgs e, string carId, int quantity)
+    {
+        var sessionId = await storage.GetAsync<string>("SessionId");
+
+        bool cartResult = await CartService.AddToCart(sessionId.Value, carId, quantity);
+
+        if(cartResult)
+        {
+            Console.WriteLine("Added item to cart");
+        } else
+        {
+            Console.WriteLine("Failed adding item to cart");
+        }
+    }
 }

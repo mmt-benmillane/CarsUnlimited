@@ -84,6 +84,7 @@ namespace CarsUnlimited.Web
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<InventoryService>();
+            services.AddSingleton<CartService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
