@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
+using Blazored.Toast;
 
 namespace CarsUnlimited.Web
 {
@@ -85,6 +86,8 @@ namespace CarsUnlimited.Web
             services.AddServerSideBlazor();
             services.AddSingleton<InventoryService>();
             services.AddSingleton<CartService>();
+
+            services.AddBlazoredToast();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -4,6 +4,7 @@
 @inject CartService CartService
 
 @inject ProtectedSessionStorage storage
+@inject IToastService toastService
 
 @if (CarItem == null)
 {
@@ -51,11 +52,14 @@ else
 
         bool cartResult = await CartService.AddToCart(sessionId.Value, carId, quantity);
 
-        if(cartResult)
+        if (cartResult)
         {
+            toastService.ShowSuccess("Added item to cart");
             Console.WriteLine("Added item to cart");
-        } else
+        }
+        else
         {
+            toastService.ShowError("Couldn't add item to cart");
             Console.WriteLine("Failed adding item to cart");
         }
     }
