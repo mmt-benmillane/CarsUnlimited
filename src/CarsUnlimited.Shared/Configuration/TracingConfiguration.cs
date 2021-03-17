@@ -16,6 +16,7 @@
 
     public enum TraceExporterOptions
     {
+        CONSOLE = -1,
         JAEGER = 0,
         ZIPKIN = 1,
         OPENTELEMETRY_PROTOCOL = 2

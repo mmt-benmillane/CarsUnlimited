@@ -23,6 +23,7 @@ services:
    environment:
    - ASPNETCORE_ENVIRONMENT=Development
    - InventoryDatabaseSettings__ConnectionString=mongodb://inventorydb:27017
+   - TracingConfiguration__Exporter=-1
    - TracingConfiguration__JaegerEndpoint__Host=jaeger
    - TracingConfiguration__JaegerEndpoint__Port=6831
    depends_on:
