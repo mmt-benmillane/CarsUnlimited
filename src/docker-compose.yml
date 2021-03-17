@@ -114,6 +114,7 @@ services:
     environment:
     - ASPNETCORE_ENVIRONMENT=Development
     - InventoryDatabaseSettings__ConnectionString=mongodb://inventorydb:27017
+    - TracingConfiguration__Exporter=0
     - TracingConfiguration__JaegerEndpoint__Host=jaeger
     - TracingConfiguration__JaegerEndpoint__Port=6831
     - InventoryApiKey=THIS_IS_MY_KEY
@@ -151,6 +152,7 @@ services:
       - RedisSettings__Ssl=false
       - RedisSettings__Host=cartdb
       - RedisSettings__Port=6379
+      - TracingConfiguration__Exporter=0
       - TracingConfiguration__JaegerEndpoint__Host=jaeger
       - TracingConfiguration__JaegerEndpoint__Port=6831
       - ServiceBusConfiguration__HostName=rabbitmq
@@ -198,6 +200,7 @@ services:
       dockerfile: CarsUnlimited.Web/Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - TracingConfiguration__Exporter=0
       - TracingConfiguration__JaegerEndpoint__Host=jaeger
       - TracingConfiguration__JaegerEndpoint__Port=6831
       - ApiGatewayUrl=http://kong:8000/
