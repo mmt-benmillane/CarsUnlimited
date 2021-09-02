@@ -17,12 +17,14 @@ namespace CarsUnlimited.CartAPI.Controllers
         private readonly ICartService _cartService;
         private readonly ILogger<CartController> _logger;
         private readonly IConfiguration _config;
+        private readonly IGetCartItems _getCartItems;
 
-        public CartController(ICartService cartService, ILogger<CartController> logger, IConfiguration configuration)
+        public CartController(ICartService cartService, ILogger<CartController> logger, IConfiguration configuration, IGetCartItems getCartItems)
         {
             _cartService = cartService;
             _logger = logger;
             _config = configuration;
+            _getCartItems = getCartItems;
         }
 
         [HttpPost]
@@ -51,7 +53,7 @@ namespace CarsUnlimited.CartAPI.Controllers
         {
             if(!string.IsNullOrWhiteSpace(sessionId))
             {
-                List<CartItem> cartItems = await _cartService.GetItemsInCart(sessionId);
+                List<CartItem> cartItems = await _getCartItems.GetItemsInCart(sessionId);
                 return StatusCode(200, cartItems);
             } else
             {
@@ -65,7 +67,7 @@ namespace CarsUnlimited.CartAPI.Controllers
         {
             if (!string.IsNullOrWhiteSpace(sessionId))
             {
-                return StatusCode(200, await _cartService.GetItemsInCartCount(sessionId));
+                return StatusCode(200, await _getCartItems.GetItemsInCartCount(sessionId));
             }
             else
             {

@@ -14,26 +14,28 @@ namespace CarsUnlimited.CartAPI.Tests
     [TestClass]
     public class CartServiceTests
     {
-        Mock<IRedisCacheClient> mockIRedisCacheClient;
-        Mock<ILogger<CartService>> mockILogger;
-        Mock<IConfiguration> mockIConfiguration;
+        Mock<IRedisCacheClient> _mockIRedisCacheClient;
+        Mock<ILogger<UpdateCartService>> _mockILogger;
+        Mock<IConfiguration> _mockIConfiguration;
+        Mock<IGetCartItems> _mockGetCartItems;
 
 
         [TestInitialize]
         public void Initialise()
         {
-            mockIRedisCacheClient = new Mock<IRedisCacheClient>();
-            mockILogger = new Mock<ILogger<CartService>>();
-            mockIConfiguration = new Mock<IConfiguration>();
+            _mockIRedisCacheClient = new Mock<IRedisCacheClient>();
+            _mockILogger = new Mock<ILogger<UpdateCartService>>();
+            _mockIConfiguration = new Mock<IConfiguration>();
+            _mockGetCartItems = new Mock<IGetCartItems>();
         }
 
         [TestMethod]
         public async Task GivenCartItem_WhenAddedToCart_ThenItemIsAddedToCart()
         {
             var cartItem = new CartItem();
-            mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().AddAsync<CartItem>(It.IsAny<string>(), It.IsAny<CartItem>(), 
+            _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().AddAsync<CartItem>(It.IsAny<string>(), It.IsAny<CartItem>(), 
                                             It.IsAny<DateTimeOffset>(), It.IsAny<When>(), It.IsAny<CommandFlags>())).ReturnsAsync(true);
-            CartService service = new CartService(mockIRedisCacheClient.Object, mockILogger.Object, mockIConfiguration.Object);
+            UpdateCartService service = new UpdateCartService(_mockIRedisCacheClient.Object, _mockILogger.Object, _mockIConfiguration.Object, _mockGetCartItems.Object);
             var result = await service.AddToCart(cartItem);
             Assert.AreEqual(true, result);
         }

@@ -1,5 +1,4 @@
-﻿using CarsUnlimited.CartAPI.Configuration;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using RabbitMQ.Client;
 using StackExchange.Redis;
@@ -14,18 +13,19 @@ using CarsUnlimited.CartShared.Entities;
 
 namespace CarsUnlimited.CartAPI.Services
 {
-    public class CartService : ICartService
+    public class UpdateCartService : ICartService
     {
         private readonly IRedisCacheClient _redisCacheClient;
-        private readonly ILogger<CartService> _logger;
+        private readonly ILogger<UpdateCartService> _logger;
         private readonly IConfiguration _config;
-        private IConnectionFactory _connectionFactory;
+        private readonly IGetCartItems _getCartItems;
 
-        public CartService(IRedisCacheClient redisCacheClient, ILogger<CartService> logger, IConfiguration configuration)
+        public UpdateCartService(IRedisCacheClient redisCacheClient, ILogger<UpdateCartService> logger, IConfiguration configuration, IGetCartItems getCartItems)
         {
             _redisCacheClient = redisCacheClient;
             _logger = logger;
             _config = configuration;
+            _getCartItems = getCartItems;
         }
 
         public async Task<bool> AddToCart(CartItem cartItem)
@@ -47,7 +47,7 @@ namespace CarsUnlimited.CartAPI.Services
         public async Task<bool> CompleteCart(string sessionId, IConnectionFactory connectionFactory)
         {
             _logger.LogInformation($"CompleteCart: Beginning complete cart action for {sessionId}.");
-            var cartItems = await GetItemsInCart(sessionId);
+            var cartItems = await _getCartItems.GetItemsInCart(sessionId);
 
             foreach (var cartItem in cartItems)
             {
@@ -93,7 +93,7 @@ namespace CarsUnlimited.CartAPI.Services
 
         public async Task<bool> DeleteAllFromCart(string sessionId)
         {
-            var cartItems = await GetItemsInCart(sessionId);
+            var cartItems = await _getCartItems.GetItemsInCart(sessionId);
             if(cartItems.Any())
             {
                 List<string> IdsToDelete = new List<string>();
@@ -121,7 +121,7 @@ namespace CarsUnlimited.CartAPI.Services
 
         public async Task<bool> DeleteFromCart(string sessionId, string carId)
         {
-            var cartItems = await GetItemsInCart(sessionId);
+            var cartItems = await _getCartItems.GetItemsInCart(sessionId);
             if (cartItems.Any())
             {
                 CartItem itemToDelete = cartItems.Where(item => item.CarId == carId).FirstOrDefault();
@@ -144,57 +144,6 @@ namespace CarsUnlimited.CartAPI.Services
             }
 
             return false;
-        }
-
-        public async Task<List<CartItem>> GetItemsInCart(string sessionId)
-        {
-            List<CartItem> cartItems = new List<CartItem>();
-
-            try
-            {
-                var keys = await SearchKeys(sessionId);
-                if (keys.Any()) {
-                    foreach (string key in keys)
-                    {
-                        CartItem cartItem = await _redisCacheClient.GetDbFromConfiguration().GetAsync<CartItem>(key);
-                        cartItems.Add(cartItem);
-                    }
-                }
-            } 
-            catch (RedisException ex)
-            {
-                _logger.LogError($"GetItemsInCart: Redis Error: {ex.Message}");
-            }
-
-            return cartItems;
-        }
-
-        public async Task<int> GetItemsInCartCount(string sessionId)
-        {
-            List<CartItem> cartItems = await GetItemsInCart(sessionId);
-            int cartItemsCount = 0;
-
-            foreach(CartItem cartItem in cartItems)
-            {
-                cartItemsCount += cartItem.Count;
-            }
-
-            return cartItemsCount;
-            
-        }
-
-        internal async Task<List<string>> SearchKeys(string sessionId)
-        {
-            try
-            {
-                var keys = await _redisCacheClient.GetDbFromConfiguration().SearchKeysAsync($"*{sessionId}*");
-                return keys.ToList();
-            }
-            catch (RedisException ex)
-            {
-                _logger.LogError($"SearchKeys: Redis Error: {ex.Message}");
-                return null;
-            }
         }
     }
 }
