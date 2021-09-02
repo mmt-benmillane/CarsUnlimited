@@ -14,17 +14,25 @@ namespace CarsUnlimited.CartAPI.Tests
     [TestClass]
     public class CartServiceTests
     {
+        Mock<IRedisCacheClient> mockIRedisCacheClient;
+        Mock<ILogger<CartService>> mockILogger;
+        Mock<IConfiguration> mockIConfiguration;
+
+
+        [TestInitialize]
+        public void Initialise()
+        {
+            mockIRedisCacheClient = new Mock<IRedisCacheClient>();
+            mockILogger = new Mock<ILogger<CartService>>();
+            mockIConfiguration = new Mock<IConfiguration>();
+        }
+
         [TestMethod]
         public async Task GivenCartItem_WhenAddedToCart_ThenItemIsAddedToCart()
         {
-            var mockIRedisCacheClient = new Mock<IRedisCacheClient>();
-            var mockILogger = new Mock<ILogger<CartService>>();
-            var mockIConfiguration = new Mock<IConfiguration>();
             var cartItem = new CartItem();
-
             mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().AddAsync<CartItem>(It.IsAny<string>(), It.IsAny<CartItem>(), 
                                             It.IsAny<DateTimeOffset>(), It.IsAny<When>(), It.IsAny<CommandFlags>())).ReturnsAsync(true);
-
             CartService service = new CartService(mockIRedisCacheClient.Object, mockILogger.Object, mockIConfiguration.Object);
             var result = await service.AddToCart(cartItem);
             Assert.AreEqual(true, result);
