@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CarsUnlimited.CartAPI.Configuration
+﻿namespace CarsUnlimited.CartAPI.Configuration
 {
     public interface IServiceBusConfiguration
     {

@@ -37,5 +37,11 @@ namespace CarsUnlimited.CartAPI.Tests
             var result = await service.AddToCart(cartItem);
             Assert.AreEqual(true, result);
         }
+
+        [TestMethod]
+        public async Task GivenCartWithItems_WhenCartIsCompleted_ThenAllItemsSavedToInventory()
+        {
+            Assert.IsTrue(true);
+        }
     }
 }

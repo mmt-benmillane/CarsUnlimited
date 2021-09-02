@@ -19,6 +19,7 @@ namespace CarsUnlimited.CartAPI.Services
         private readonly IRedisCacheClient _redisCacheClient;
         private readonly ILogger<CartService> _logger;
         private readonly IConfiguration _config;
+        private IConnectionFactory _connectionFactory;
 
         public CartService(IRedisCacheClient redisCacheClient, ILogger<CartService> logger, IConfiguration configuration)
         {
@@ -43,23 +44,13 @@ namespace CarsUnlimited.CartAPI.Services
             }
         }
 
-        public async Task<bool> CompleteCart(string sessionId)
+        public async Task<bool> CompleteCart(string sessionId, IConnectionFactory connectionFactory)
         {
             _logger.LogInformation($"CompleteCart: Beginning complete cart action for {sessionId}.");
-            var serviceBusConfig = _config.GetSection("ServiceBusConfiguration").Get<ServiceBusConfiguration>();
-
-            ConnectionFactory connectionFactory = new ConnectionFactory
-            {
-                HostName = serviceBusConfig.HostName,
-                UserName = serviceBusConfig.UserName,
-                Password = serviceBusConfig.Password
-            };
-
             var cartItems = await GetItemsInCart(sessionId);
 
             foreach (var cartItem in cartItems)
             {
-
                 InventoryMessage inventoryMessage = new InventoryMessage
                 {
                     CarId = cartItem.CarId,
@@ -70,19 +61,19 @@ namespace CarsUnlimited.CartAPI.Services
                 using (var channel = connection.CreateModel())
                 {
                     channel.QueueDeclare(queue: "cmd-inventory",
-                                     durable: false,
-                                     exclusive: false,
-                                     autoDelete: false,
-                                     arguments: null);
+                                        durable: false,
+                                        exclusive: false,
+                                        autoDelete: false,
+                                        arguments: null);
 
                     var body = JsonSerializer.SerializeToUtf8Bytes(inventoryMessage);
 
                     try
                     {
                         channel.BasicPublish(exchange: "",
-                                         routingKey: "cmd-inventory",
-                                         basicProperties: null,
-                                         body: body);
+                                            routingKey: "cmd-inventory",
+                                            basicProperties: null,
+                                            body: body);
                     }
                     catch (RabbitMQClientException ex)
                     {

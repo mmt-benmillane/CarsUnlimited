@@ -5,6 +5,8 @@ using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using System.Threading.Tasks;
 using CarsUnlimited.CartShared.Entities;
+using RabbitMQ.Client;
+using CarsUnlimited.CartAPI.Configuration;
 
 namespace CarsUnlimited.CartAPI.Controllers
 {
@@ -106,7 +108,14 @@ namespace CarsUnlimited.CartAPI.Controllers
         {
             if(!string.IsNullOrWhiteSpace(cartApiKey) && cartApiKey == _config.GetValue<string>("CartApiKey"))
             {
-                await _cartService.CompleteCart(sessionId);
+                var serviceBusConfig = _config.GetSection("ServiceBusConfiguration").Get<ServiceBusConfiguration>();
+                ConnectionFactory connectionFactory = new ConnectionFactory
+                {
+                    HostName = serviceBusConfig.HostName,
+                    UserName = serviceBusConfig.UserName,
+                    Password = serviceBusConfig.Password
+                };
+                await _cartService.CompleteCart(sessionId, connectionFactory);
                 return StatusCode(200);
             }
 
