@@ -1,15 +1,16 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using CarsUnlimited.CartAPI;
+using CarsUnlimited.CartShared.Entities;
 
 namespace CarsUnlimited.CartAPI.Tests
 {
     [TestClass]
-    public class UnitTest1
+    public class CartServiceTests
     {
         [TestMethod]
-        public void TestMethod1()
+        public void GivenCartItem_WhenAddedToCart_ThenItemIsAddedToCart()
         {
             Assert.IsTrue(true);
         }
     }
-
 }
