@@ -5,7 +5,6 @@ using CarsUnlimited.InventoryAPI.Services;
 using CarsUnlimited.InventoryAPI.Entities;
 using CarsUnlimited.CartShared.Entities;
 using Microsoft.Extensions.Configuration;
-using System.Text.Json;
 
 namespace CarsUnlimited.InventoryAPI.Controllers
 {
