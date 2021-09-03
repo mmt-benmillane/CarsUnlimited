@@ -85,6 +85,19 @@ namespace CarsUnlimited.CartAPI.Tests
             _mockIRedisCacheClient.Verify(x => x.GetDbFromConfiguration().RemoveAllAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<CommandFlags>()), Times.Once);
         }
 
+        [TestMethod]
+        public async Task GivenCartWithItems_WhenRequestedToRemoveIndividualItem_ThenOnlyThatItemIsRemoved()
+        {
+            _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().RemoveAsync(It.IsAny<string>(), It.IsAny<CommandFlags>())).ReturnsAsync(true);
+
+            UpdateCartService service = new UpdateCartService(_mockIRedisCacheClient.Object, _mockILogger.Object, _mockIConfiguration.Object, _mockGetCartItems.Object);
+
+            var result = await service.DeleteFromCart("1", "3");
+
+            _mockIRedisCacheClient.Verify(x => x.GetDbFromConfiguration().RemoveAsync("1_3", It.IsAny<CommandFlags>()), Times.Once);
+            _mockIRedisCacheClient.Verify(x => x.GetDbFromConfiguration().RemoveAsync("2_4", It.IsAny<CommandFlags>()), Times.Never);
+        }
+
         private void CartCompleteSetup()
         {
             _mockIConnection.Setup(x => x.CreateModel()).Returns(_mockIModel.Object);
