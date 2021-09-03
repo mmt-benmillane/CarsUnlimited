@@ -8,6 +8,8 @@ using Microsoft.Extensions.Configuration;
 using System;
 using StackExchange.Redis;
 using System.Threading.Tasks;
+using RabbitMQ.Client;
+using System.Collections.Generic;
 
 namespace CarsUnlimited.CartAPI.Tests
 {
@@ -43,7 +45,26 @@ namespace CarsUnlimited.CartAPI.Tests
         [TestMethod]
         public async Task GivenCartWithItems_WhenCartIsCompleted_ThenAllItemsSavedToInventory()
         {
-            Assert.IsTrue(true);
+            var mockIConnectionFactory  = new Mock<IConnectionFactory>();
+            var mockIConnection = new Mock<IConnection>();
+            var mockIModel = new Mock<IModel>();
+
+            mockIConnection.Setup(x => x.CreateModel()).Returns(mockIModel.Object);
+            mockIConnectionFactory.Setup(x => x.CreateConnection()).Returns(mockIConnection.Object);
+            _mockGetCartItems.Setup(x => x.GetItemsInCart(It.IsAny<string>())).ReturnsAsync(new List<CartItem>(){ new CartItem() { SessionId = "1", CarId = "3" }, new CartItem() { SessionId = "2", CarId = "4" } });
+            _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().RemoveAsync(It.IsAny<string>(), It.IsAny<CommandFlags>())).ReturnsAsync(true);
+
+            UpdateCartService service = new UpdateCartService(_mockIRedisCacheClient.Object, _mockILogger.Object, _mockIConfiguration.Object, _mockGetCartItems.Object);
+
+            var result = await service.CompleteCart("test", mockIConnectionFactory.Object);
+
+            Assert.AreEqual(true, result);
         }
+
+        //Test Complete cart that channel.QueueDeclare is called correct amount of times
+        //Test Complete cart that channel.BasicPublish is called correct amount of times
+        //Test for failure conditions
+        //Logging tests required? Perhaps add conditions for these into existing tests
+
     }
 }
