@@ -73,15 +73,24 @@ namespace CarsUnlimited.CartAPI.Tests
             _mockIModel.Verify(x => x.QueueDeclare(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IDictionary<string, object>>()), Times.Exactly(2));
         }
 
+        [TestMethod]
+        public async Task GivenCartWithItems_WhenRequestedToRemoveAllItems_ThenAllItemsAreRemoved()
+        {
+            _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().RemoveAllAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<CommandFlags>())).ReturnsAsync(new long());
+
+            UpdateCartService service = new UpdateCartService(_mockIRedisCacheClient.Object, _mockILogger.Object, _mockIConfiguration.Object, _mockGetCartItems.Object);
+
+            var result = await service.DeleteAllFromCart("");
+
+            _mockIRedisCacheClient.Verify(x => x.GetDbFromConfiguration().RemoveAllAsync(It.IsAny<IEnumerable<string>>(), It.IsAny<CommandFlags>()), Times.Once);
+        }
+
         private void CartCompleteSetup()
         {
             _mockIConnection.Setup(x => x.CreateModel()).Returns(_mockIModel.Object);
             _mockIConnectionFactory.Setup(x => x.CreateConnection()).Returns(_mockIConnection.Object);
             _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().RemoveAsync(It.IsAny<string>(), It.IsAny<CommandFlags>())).ReturnsAsync(true);
         }
-
-        //Test for failure conditions
-        //Logging tests required? Perhaps add conditions for these into existing tests
 
     }
 }
