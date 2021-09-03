@@ -29,6 +29,7 @@ namespace CarsUnlimited.CartAPI.Tests
             _mockILogger = new Mock<ILogger<UpdateCartService>>();
             _mockIConfiguration = new Mock<IConfiguration>();
             _mockGetCartItems = new Mock<IGetCartItems>();
+            _mockGetCartItems.Setup(x => x.GetItemsInCart(It.IsAny<string>())).ReturnsAsync(new List<CartItem>(){ new CartItem() { SessionId = "1", CarId = "3" }, new CartItem() { SessionId = "2", CarId = "4" } });
         }
 
         [TestMethod]
@@ -51,7 +52,6 @@ namespace CarsUnlimited.CartAPI.Tests
 
             mockIConnection.Setup(x => x.CreateModel()).Returns(mockIModel.Object);
             mockIConnectionFactory.Setup(x => x.CreateConnection()).Returns(mockIConnection.Object);
-            _mockGetCartItems.Setup(x => x.GetItemsInCart(It.IsAny<string>())).ReturnsAsync(new List<CartItem>(){ new CartItem() { SessionId = "1", CarId = "3" }, new CartItem() { SessionId = "2", CarId = "4" } });
             _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().RemoveAsync(It.IsAny<string>(), It.IsAny<CommandFlags>())).ReturnsAsync(true);
 
             UpdateCartService service = new UpdateCartService(_mockIRedisCacheClient.Object, _mockILogger.Object, _mockIConfiguration.Object, _mockGetCartItems.Object);
@@ -62,7 +62,24 @@ namespace CarsUnlimited.CartAPI.Tests
         }
 
         //Test Complete cart that channel.QueueDeclare is called correct amount of times
-        //Test Complete cart that channel.BasicPublish is called correct amount of times
+        [TestMethod]
+        public async Task GivenCartWith2Items_WhenCartIsCompleted_Then2QueuesAreDeclared()
+        {
+            var mockIConnectionFactory  = new Mock<IConnectionFactory>();
+            var mockIConnection = new Mock<IConnection>();
+            var mockIModel = new Mock<IModel>();
+
+            mockIConnection.Setup(x => x.CreateModel()).Returns(mockIModel.Object);
+            mockIConnectionFactory.Setup(x => x.CreateConnection()).Returns(mockIConnection.Object);
+            _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().RemoveAsync(It.IsAny<string>(), It.IsAny<CommandFlags>())).ReturnsAsync(true);
+
+            UpdateCartService service = new UpdateCartService(_mockIRedisCacheClient.Object, _mockILogger.Object, _mockIConfiguration.Object, _mockGetCartItems.Object);
+
+            var result = await service.CompleteCart("test", mockIConnectionFactory.Object);
+
+            mockIModel.Verify(x => x.QueueDeclare(It.IsAny<string>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<bool>(), It.IsAny<IDictionary<string, object>>()), Times.Exactly(2));
+        }
+
         //Test for failure conditions
         //Logging tests required? Perhaps add conditions for these into existing tests
 
