@@ -3,22 +3,15 @@ using CarsUnlimited.CartAPI.Services;
 using CarsUnlimited.Shared.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using OpenTelemetry.Resources;
 using OpenTelemetry.Trace;
 using StackExchange.Redis.Extensions.Core.Configuration;
 using StackExchange.Redis.Extensions.System.Text.Json;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CarsUnlimited.CartAPI
 {
@@ -110,7 +103,8 @@ namespace CarsUnlimited.CartAPI
 
             services.AddStackExchangeRedisExtensions<SystemTextJsonSerializer>(redisConfiguration);
 
-            services.AddScoped<ICartService, CartService>();
+            services.AddScoped<IUpdateCartService, UpdateCartService>();
+            services.AddScoped<IGetCartItems, GetCartItems>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
