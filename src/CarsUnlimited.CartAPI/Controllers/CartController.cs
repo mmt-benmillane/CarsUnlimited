@@ -14,12 +14,12 @@ namespace CarsUnlimited.CartAPI.Controllers
     [ApiController]
     public class CartController : ControllerBase
     {
-        private readonly ICartService _cartService;
+        private readonly IUpdateCartService _cartService;
         private readonly ILogger<CartController> _logger;
         private readonly IConfiguration _config;
         private readonly IGetCartItems _getCartItems;
 
-        public CartController(ICartService cartService, ILogger<CartController> logger, IConfiguration configuration, IGetCartItems getCartItems)
+        public CartController(IUpdateCartService cartService, ILogger<CartController> logger, IConfiguration configuration, IGetCartItems getCartItems)
         {
             _cartService = cartService;
             _logger = logger;

@@ -103,7 +103,7 @@ namespace CarsUnlimited.CartAPI
 
             services.AddStackExchangeRedisExtensions<SystemTextJsonSerializer>(redisConfiguration);
 
-            services.AddScoped<ICartService, UpdateCartService>();
+            services.AddScoped<IUpdateCartService, UpdateCartService>();
             services.AddScoped<IGetCartItems, GetCartItems>();
 
             services.AddControllers();

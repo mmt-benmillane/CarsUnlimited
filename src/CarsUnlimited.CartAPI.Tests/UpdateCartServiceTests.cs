@@ -61,7 +61,6 @@ namespace CarsUnlimited.CartAPI.Tests
             Assert.AreEqual(true, result);
         }
 
-        //Test Complete cart that channel.QueueDeclare is called correct amount of times
         [TestMethod]
         public async Task GivenCartWith2Items_WhenCartIsCompleted_Then2QueuesAreDeclared()
         {
@@ -104,6 +103,5 @@ namespace CarsUnlimited.CartAPI.Tests
             _mockIConnectionFactory.Setup(x => x.CreateConnection()).Returns(_mockIConnection.Object);
             _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().RemoveAsync(It.IsAny<string>(), It.IsAny<CommandFlags>())).ReturnsAsync(true);
         }
-
     }
 }
