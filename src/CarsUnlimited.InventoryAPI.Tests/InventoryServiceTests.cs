@@ -1,6 +1,5 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MongoDB.Driver;
-using System.Collections.Generic;
 using CarsUnlimited.InventoryAPI.Repository;
 using CarsUnlimited.InventoryAPI.Entities;
 using Moq;
@@ -58,6 +57,5 @@ namespace CarsUnlimited.InventoryAPI.Tests
             inventoryService.Update( new CarItem { Id="one" } );
             _carItemRepository.Verify( x => x.ReplaceOne(It.IsAny<CarItem>()), Times.Once );
         }
-
     }
 }
