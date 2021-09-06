@@ -37,6 +37,15 @@ namespace CarsUnlimited.CartAPI.Tests
             Assert.AreEqual("four", result[1].CarId);
 
         }
+        
+        [TestMethod]
+        public async Task GivenASessionId_WhenNumberOfItemsInCartIsRequested_ThenCorrectNumberIsReturned()
+        {
+            GetCartItems getCartItems = new GetCartItems(_mockIRedisCacheClient.Object, _mockILogger.Object);
+            var result = await getCartItems.GetItemsInCart("test");
+
+            Assert.AreEqual(2, result.Count);
+        }
 
     }
 }
