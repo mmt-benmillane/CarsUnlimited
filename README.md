@@ -6,6 +6,7 @@ It is a work in progress.
 
 ## Pre-Requisites
 
+TODO - Links to software to install beforehand (consider adding this into a one off setup script that can be ran by new users)
 TODO - Add instructions regarding Mongo installation (consider adding this into a one off setup script that can be ran by new users)
 TODO - Test URLs for Swagger
 TODO - Test scenarios that can be ran in Postman
@@ -32,6 +33,9 @@ This is a list of technologies used (or intended to be used).
 - Grafana
 - Kiali
 - Golang
+
+## Docker Compose
+Docker compose is to be used for local dev testing. The compose files are aplit up between the master docker-compose.yml file which contains all services and dependencies to spin up the full service. There are individual compose files the spin up individual services plus their dependencies for testing in isolation.
 
 ## Useful Links
 
