@@ -10,9 +10,9 @@
             "request": "launch",
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
-            "program": "${workspaceFolder}/CarsUnlimited.Inventory/bin/Debug/net5.0/CarsUnlimited.Inventory.dll",
+            "program": "${workspaceFolder}/src/CarsUnlimited.InventoryAPI/bin/Debug/net5.0/CarsUnlimited.InventoryAPI.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/CarsUnlimited.Inventory",
+            "cwd": "${workspaceFolder}/src/CarsUnlimited.InventoryAPI",
             "stopAtEntry": false,
             // Enable launching a web browser when ASP.NET Core starts. For more information: https://aka.ms/VSCode-CS-LaunchJson-WebBrowser
             "serverReadyAction": {
@@ -21,9 +21,6 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development"
-            },
-            "sourceFileMap": {
-                "/Views": "${workspaceFolder}/Views"
             }
         },
         {

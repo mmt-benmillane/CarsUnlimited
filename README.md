@@ -4,6 +4,14 @@ This project is to replace v1 of Cars Unlimited used in Docker, Azure DevOps and
 
 It is a work in progress.
 
+## Pre-Requisites
+
+TODO - Add instructions regarding Mongo installation (consider adding this into a one off setup script that can be ran by new users)
+TODO - Test URLs for Swagger
+TODO - Test scenarios that can be ran in Postman
+TODO - Instructions on how to locally debug Each API
+TODO - Instructions around Testing via Docker
+
 ## Overview
 
 ![Cars Unlimited](/docs/CarsUnlimitedv2.png)
