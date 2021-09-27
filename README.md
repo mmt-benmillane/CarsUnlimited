@@ -35,7 +35,16 @@ This is a list of technologies used (or intended to be used).
 - Golang
 
 ## Docker Compose
-Docker compose is to be used for local dev testing. The compose files are aplit up between the master docker-compose.yml file which contains all services and dependencies to spin up the full service. There are individual compose files the spin up individual services plus their dependencies for testing in isolation.
+Docker compose is to be used for local dev testing. The compose files are split up between the master docker-compose.yml file which contains all services and dependencies to spin up the full service. There are individual compose files that spin up individual services and their dependencies, for testing in isolation.
+
+## Docker Build Cart API
+CD into the "src" directory and run command `docker build . -t {YOUR TAG HERE} -f CarsUnlimited.CartAPI/Dockerfile`
+
+## Docker Build Inventory API
+CD into the "src" directory and run command `docker build . -t {YOUR TAG HERE} -f CarsUnlimited.InventoryAPI/Dockerfile`
+
+## Docker Build Purchase API
+CD into the "src/CarsUnlimited-Purchase-API" directory and run command `docker build . -t {YOUR TAG HERE}`
 
 ## Useful Links
 

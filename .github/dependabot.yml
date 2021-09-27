@@ -4,7 +4,7 @@ updates:
     directory: "/src/CarsUnlimited.CartAPI" # Location of package manifests
     schedule:
       interval: "daily"   
-   
+
   - package-ecosystem: "nuget" # See documentation for possible values
     directory: "/src/CarsUnlimited.CartShared" # Location of package manifests
     schedule:
