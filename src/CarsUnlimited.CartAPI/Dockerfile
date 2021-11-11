@@ -12,7 +12,7 @@ COPY ["CarsUnlimited.CartShared/CarsUnlimited.CartShared.csproj", "CarsUnlimited
 COPY ["CarsUnlimited.Shared/CarsUnlimited.Shared.csproj", "CarsUnlimited.Shared/"]
 RUN dotnet restore "CarsUnlimited.CartAPI/CarsUnlimited.CartAPI.csproj"
 COPY . .
-WORKDIR "/src/CarsUnlimited.CartAPI"
+WORKDIR "/CarsUnlimited.CartAPI"
 RUN dotnet build "CarsUnlimited.CartAPI.csproj" -c Release -o /app/build
 
 FROM build AS publish
