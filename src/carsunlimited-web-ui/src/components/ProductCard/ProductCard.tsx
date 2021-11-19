@@ -1,12 +1,15 @@
-import React from 'react';
+import React from "react";
 //import styles from './ProductCard.module.css';
 
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import CardMedia from '@mui/material/CardMedia';
-import Typography from '@mui/material/Typography';
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import CardMedia from "@mui/material/CardMedia";
+import Typography from "@mui/material/Typography";
+import Rating from "@mui/material/Rating";
 
 export default function ProductCard() {
+  const [value, setValue] = React.useState<number | null>(2);
+
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardMedia
@@ -20,7 +23,10 @@ export default function ProductCard() {
           [[Some Car Name]]
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+          <Rating name="read-only" value={value} readOnly />
+        </Typography>
+        <Typography variant="button" color="text.secondary" align="right">
+          <strong>&pound;[[Price]]</strong>
         </Typography>
       </CardContent>
     </Card>
