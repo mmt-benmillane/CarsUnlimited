@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography";
 import Rating from "@mui/material/Rating";
 
 export default function ProductCard() {
-  const [value, setValue] = React.useState<number | null>(2);
+  const value = 2;
 
   return (
     <Card sx={{ maxWidth: 345 }}>

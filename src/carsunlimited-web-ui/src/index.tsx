@@ -6,13 +6,14 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 //pages
-import { HomePage } from './pages';
+import { HomePage, Inventory } from './pages';
 
 ReactDOM.render(
   <React.StrictMode>   
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
+        <Route path="/inventory" element={<Inventory />} />
       </Routes>
     </Router>
   </React.StrictMode>,
