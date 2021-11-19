@@ -5,6 +5,7 @@ import Header from './../../components/Header/Header';
 import Carousel from './../../components/Carousel/Carousel';
 import Navigation from '../../components/Navigation/Navigation';
 import { Grid } from '@mui/material';
+import LatestProducts from '../../components/LatestProducts/LatestProducts';
 
 const HomePage = () => (
 
@@ -18,7 +19,18 @@ const HomePage = () => (
         <Carousel />
       </Grid>
     </Grid>
-    HomePage Component
+    <br />
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
+        <LatestProducts name="Cars" />
+      </Grid>
+      <Grid item xs={12}>
+        <LatestProducts name="Parts & Accessories" />
+      </Grid>
+      <Grid item xs={12}>
+        <LatestProducts name="Offers" />
+      </Grid>
+    </Grid>
   </div>
 );
 
