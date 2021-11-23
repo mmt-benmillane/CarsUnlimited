@@ -8,7 +8,8 @@ import Typography from "@mui/material/Typography";
 import Rating from "@mui/material/Rating";
 
 export default function ProductCard() {
-  const value = 2;
+  const ratingScore = 2;
+  const ratingCount = 3;
 
   return (
     <Card sx={{ maxWidth: 345 }}>
@@ -23,7 +24,7 @@ export default function ProductCard() {
           [[Some Car Name]]
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          <Rating name="read-only" value={value} readOnly />
+          <Rating name="read-only" value={ratingScore} readOnly /> {ratingCount} ratings
         </Typography>
         <Typography variant="button" color="text.secondary" align="right">
           <strong>&pound;[[Price]]</strong>
