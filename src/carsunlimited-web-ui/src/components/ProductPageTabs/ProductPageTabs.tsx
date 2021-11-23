@@ -50,7 +50,7 @@ export default function ProductPageTabs() {
       </Tabs>
     </Box>
     <TabPanel value={value} index={0}>
-    The BMW X5 offers driving pleasure on any terrain thanks to the enhanced BMW TwinPower Turbo power unit and the outstanding traction of BMW xDrive all-wheel drive. The optional xOffroad package provides finer tuning: four selectable off-road modes adjust the all-wheel drive precisely to the current ground conditions.
+      The BMW X5 offers driving pleasure on any terrain thanks to the enhanced BMW TwinPower Turbo power unit and the outstanding traction of BMW xDrive all-wheel drive. The optional xOffroad package provides finer tuning: four selectable off-road modes adjust the all-wheel drive precisely to the current ground conditions.
     </TabPanel>
     <TabPanel value={value} index={1}>
       Item Two
