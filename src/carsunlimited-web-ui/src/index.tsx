@@ -6,7 +6,7 @@ import reportWebVitals from './reportWebVitals';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 
 //pages
-import { HomePage, Inventory } from './pages';
+import { HomePage, Inventory, Product } from './pages';
 
 ReactDOM.render(
   <React.StrictMode>   
@@ -16,6 +16,7 @@ ReactDOM.render(
         <Route path="/Cars" element={<Inventory category="Car" />} />
         <Route path="/Accessories" element={<Inventory category="Accessory" />} />
         <Route path="/Parts" element={<Inventory category="Part" />} />
+        <Route path="/Product/:manufacturer/:model" element={<Product />} />
       </Routes>
     </Router>
   </React.StrictMode>,
