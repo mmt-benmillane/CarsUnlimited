@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import styles from "./Product.module.css";
 import {  blue, deepPurple, green, grey, deepOrange } from "@mui/material/colors";
 import Rating from "../../components/Rating/Rating";
+import ProductPageTabs from "../../components/ProductPageTabs/ProductPageTabs";
 
 function Product() {
   let { manufacturer, model } = useParams();
@@ -45,7 +46,7 @@ function Product() {
               <Grid item xs={12}>
                 <br />
                 <Typography variant="h3" gutterBottom component="div">
-                  &pound; 50,000
+                  &pound; 61,995
                 </Typography>
               </Grid>
               <Grid item xs={12}>
@@ -59,6 +60,9 @@ function Product() {
                 </Button>
               </Grid>
             </Grid>
+          </Grid>
+          <Grid item xs={12}>
+            <ProductPageTabs />
           </Grid>
         </Grid>
       </div>
