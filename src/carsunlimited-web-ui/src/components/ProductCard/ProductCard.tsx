@@ -5,13 +5,11 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import Rating from "@mui/material/Rating";
+import Rating from "../Rating/Rating";
 
 import { Link } from "react-router-dom";
 
 export default function ProductCard() {
-  const ratingScore = 2;
-  const ratingCount = 3;
   const manufacturer = "BMW";
   const model = "X5";
 
@@ -30,8 +28,7 @@ export default function ProductCard() {
             {manufacturer} {model}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            <Rating name="read-only" value={ratingScore} readOnly />{" "}
-            {ratingCount} ratings
+            <Rating showLabel={false} />
           </Typography>
           <Typography variant="button" color="text.secondary" align="right">
             <strong>&pound;[[Price]]</strong>
