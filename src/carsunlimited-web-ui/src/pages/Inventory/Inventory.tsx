@@ -4,10 +4,14 @@ import Layout from "../../layouts/MainLayout";
 
 import styles from "./Inventory.module.css";
 
-const Inventory = () => (
+type Props = {
+  category?: string
+};
+
+const Inventory = ({ category = "Car"}: Props) => (
   <Layout>
     <div className={styles.Inventory} data-testid="Inventory">
-      Inventory Component
+      { category }
     </div>
   </Layout>
 );

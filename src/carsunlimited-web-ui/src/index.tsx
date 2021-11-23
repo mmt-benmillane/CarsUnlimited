@@ -13,7 +13,9 @@ ReactDOM.render(
     <Router>
       <Routes>
         <Route path="/" element={<HomePage />} />
-        <Route path="/inventory" element={<Inventory />} />
+        <Route path="/Cars" element={<Inventory category="Car" />} />
+        <Route path="/Accessories" element={<Inventory category="Accessory" />} />
+        <Route path="/Parts" element={<Inventory category="Part" />} />
       </Routes>
     </Router>
   </React.StrictMode>,
