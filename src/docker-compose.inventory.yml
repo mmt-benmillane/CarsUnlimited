@@ -9,9 +9,12 @@ services:
       - "16686:16686"
 
   inventorydb:
-   image: mongo:4.4-bionic
-   ports:
-   - 27017:27017
+    container_name: mongodb
+    build:
+      context: InventoryDb/
+      dockerfile: Dockerfile
+    ports:
+    - 27017:27017
 
   inventory-api:
    image: ${DOCKER_REGISTRY-}inventory.api
