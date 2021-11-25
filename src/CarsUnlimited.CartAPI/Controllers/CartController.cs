@@ -38,9 +38,17 @@ namespace CarsUnlimited.CartAPI.Controllers
 
                 cartItem.SessionId = sessionId;
 
-                _cartService.AddToCart(cartItem);
+                bool addToCartResult = _cartService.AddToCart(cartItem).Result;
 
-                return StatusCode(200);
+                if(addToCartResult)
+                {
+                    return Ok();
+                }
+                else
+                {
+                    return BadRequest();
+                }
+
             } else
             {
                 return StatusCode(404);
