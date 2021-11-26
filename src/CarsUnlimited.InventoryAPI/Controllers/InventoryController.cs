@@ -24,24 +24,24 @@ namespace CarsUnlimited.InventoryAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<List<CarItem>> Get() =>
+        public ActionResult<List<InventoryItem>> Get() =>
             _inventoryService.Get();
 
-        [HttpGet("{id:length(24)}", Name = "GetCar")]
-        public ActionResult<CarItem> Get(string id)
+        [HttpGet("{id:length(24)}", Name = "GetItem")]
+        public ActionResult<InventoryItem> Get(string id)
         {
-            _logger.LogInformation($"GetCar: Looking up {id}");
+            _logger.LogInformation($"GetItem: Looking up {id}");
 
-            var carItem = _inventoryService.Get(id);
+            var inventoryItem = _inventoryService.Get(id);
 
-            if (carItem is null)
+            if (inventoryItem is null)
             {
-                _logger.LogError($"GetCar: No item found with ID {id}");
+                _logger.LogError($"GetItem: No item found with ID {id}");
                 return NotFound();
             }
 
-            _logger.LogInformation($"GetCar: Item found with ID {id}. {carItem.CarManufacturer} {carItem.CarModel}. Stock level: {carItem.CarsInStock}");
-            return carItem;
+            _logger.LogInformation($"GetItem: Item found with ID {id}. Category: {inventoryItem.Category}. {inventoryItem.Manufacturer} {inventoryItem.Model}. Stock level: {inventoryItem.InStock}");
+            return inventoryItem;
         }
 
         [HttpPut]
@@ -51,21 +51,21 @@ namespace CarsUnlimited.InventoryAPI.Controllers
             if (!string.IsNullOrWhiteSpace(inventoryApiKey) && inventoryApiKey == _config.GetValue<string>("InventoryApiKey"))
             {
 
-                _logger.LogInformation($"UpdateStock: Looking up item {inventoryMessage.CarId}");
+                _logger.LogInformation($"UpdateStock: Looking up item {inventoryMessage.ItemId}");
 
-                var carItem = _inventoryService.Get(inventoryMessage.CarId);
+                var inventoryItem = _inventoryService.Get(inventoryMessage.ItemId);
 
-                if (carItem is null)
+                if (inventoryItem is null)
                 {
-                    _logger.LogInformation($"UpdateStock: No item found with ID {inventoryMessage.CarId}");
+                    _logger.LogInformation($"UpdateStock: No item found with ID {inventoryMessage.ItemId}");
                     return NotFound();
                 }
 
-                carItem.CarsInStock -= inventoryMessage.StockAdjustment;
+                inventoryItem.InStock -= inventoryMessage.StockAdjustment;
 
                 try
                 {
-                    _inventoryService.Update(carItem);
+                    _inventoryService.Update(inventoryItem);
                 }
                 catch (MongoDB.Driver.MongoException ex)
                 {

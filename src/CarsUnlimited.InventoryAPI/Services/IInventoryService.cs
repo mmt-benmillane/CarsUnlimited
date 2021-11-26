@@ -5,8 +5,8 @@ namespace CarsUnlimited.InventoryAPI.Services
 {
     public interface IInventoryService
     {
-        List<CarItem> Get();
-        CarItem Get(string id);
-        void Update(CarItem carIn);
+        List<InventoryItem> Get();
+        InventoryItem Get(string id);
+        void Update(InventoryItem itemIn);
     }
 }

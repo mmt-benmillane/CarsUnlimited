@@ -8,21 +8,22 @@ namespace CarsUnlimited.InventoryAPI.Services
 {
     public class InventoryService : IInventoryService
     {
-        private readonly IMongoRepository<CarItem> _carItemRepository;
+        private readonly IMongoRepository<InventoryItem> _inventoryItemRepository;
 
-        public InventoryService(IMongoRepository<CarItem> carItemRepository)
+        public InventoryService(IMongoRepository<InventoryItem> inventoryItemRepository)
         {
-            _carItemRepository = carItemRepository;
+            _inventoryItemRepository = inventoryItemRepository;
         }
 
 
-        public List<CarItem> Get() =>
-            _carItemRepository.AsQueryable().ToList();
+        public List<InventoryItem> Get() =>
+            _inventoryItemRepository.AsQueryable().ToList();
 
-        public CarItem Get(string id) =>
-            _carItemRepository.FindById(id);
+        public InventoryItem Get(string id) =>
+            _inventoryItemRepository.FindById(id);
 
-        public void Update(CarItem carIn) =>
-            _carItemRepository.ReplaceOne(carIn);
+        public void Update(InventoryItem itemIn) =>
+            _inventoryItemRepository.ReplaceOne(itemIn);
+
     }
 }

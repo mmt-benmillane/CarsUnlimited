@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace CarsUnlimited.InventoryShared.Entities
+namespace CarsUnlimited.InventoryAPI.Entities
 {
     [BsonCollection("inventory")]
     public class InventoryItem : Document
