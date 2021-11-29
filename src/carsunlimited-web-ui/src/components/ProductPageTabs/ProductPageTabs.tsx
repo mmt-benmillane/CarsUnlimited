@@ -44,7 +44,7 @@ export default function ProductPageTabs() {
   return (
     <Box sx={{ width: '100%' }}>
     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-      <Tabs value={value} onChange={handleChange} aria-label="basic tabs example">
+      <Tabs value={value} onChange={handleChange} aria-label="Tabs">
         <Tab label="Description" {...a11yProps(0)} />
         <Tab label="Review (10)" {...a11yProps(1)} />
       </Tabs>

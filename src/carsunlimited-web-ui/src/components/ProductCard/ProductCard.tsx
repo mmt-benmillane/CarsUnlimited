@@ -9,9 +9,12 @@ import Rating from "../Rating/Rating";
 
 import { Link } from "react-router-dom";
 
-export default function ProductCard() {
-  const manufacturer = "BMW";
-  const model = "X5";
+type Props = {
+  manufacturer: string,
+  model: string
+}
+
+export default function ProductCard({ manufacturer, model }: Props) {
 
   return (
     <div className={styles.ProductCard} data-testid="ProductCard">
