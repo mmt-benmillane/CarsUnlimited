@@ -44,6 +44,42 @@ namespace CarsUnlimited.InventoryAPI.Controllers
             return inventoryItem;
         }
 
+        [HttpGet("{category}")]
+        public ActionResult<List<InventoryItem>> GetByCategory(string category)
+        {
+            _logger.LogInformation($"GetByCategory: Looking up {category}");
+
+            switch (category)
+            {
+                case "Car":
+                    return GetItemsByCategory("Car");
+                case "Accessory":
+                    return GetItemsByCategory("Accessory");
+                case "Part":
+                    return GetItemsByCategory("Part");
+                default:
+                    return NotFound();
+            }
+        }
+
+        [HttpGet("{category}/latest")]
+        public ActionResult<List<InventoryItem>> GetLatestByCategory(string category)
+        {
+            _logger.LogInformation($"GetLatestByCategory: Looking up {category}");
+
+            switch (category)
+            {
+                case "Car":
+                    return GetItemsByCategory("Car", true);
+                case "Accessory":
+                    return GetItemsByCategory("Accessory", true);
+                case "Part":
+                    return GetItemsByCategory("Part", true);
+                default:
+                    return NotFound();
+            }
+        }
+
         [HttpPut]
         [Route("update-stock")]
         public IActionResult UpdateStock([FromHeader(Name = "X-CarsUnlimited-InventoryApiKey")] string inventoryApiKey, InventoryMessage inventoryMessage)
@@ -72,12 +108,24 @@ namespace CarsUnlimited.InventoryAPI.Controllers
                     _logger.LogError($"UpdateStock: Error encountered attemping stock update: {ex.Message}");
                     return StatusCode(500);
                 }
-            } 
+            }
             else
             {
                 return StatusCode(401);
             }
             return NoContent();
+        }
+
+        private List<InventoryItem> GetItemsByCategory(string category, bool onlyLatest = false)
+        {
+            List<InventoryItem> inventoryItems = onlyLatest ? _inventoryService.GetLatestByCategory(category) : _inventoryService.GetByCategory(category);
+
+            if (inventoryItems is null)
+            {
+                _logger.LogError($"GetByCategory: No items found with category {category}");
+            }
+
+            return inventoryItems;
         }
     }
 }

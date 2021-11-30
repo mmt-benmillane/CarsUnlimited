@@ -5,8 +5,10 @@ namespace CarsUnlimited.InventoryAPI.Services
 {
     public interface IInventoryService
     {
-        List<InventoryItem> Get();
+        List<InventoryItem> Get();        
         InventoryItem Get(string id);
+        List<InventoryItem> GetByCategory(string category);
+        List<InventoryItem> GetLatestByCategory(string category);
         void Update(InventoryItem itemIn);
     }
 }

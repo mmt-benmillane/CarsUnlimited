@@ -1,4 +1,5 @@
 ﻿
+using System;
 using System.Collections.Generic;
 
 namespace CarsUnlimited.InventoryShared.Entities
@@ -14,5 +15,6 @@ namespace CarsUnlimited.InventoryShared.Entities
         public int InStock { get; set; }
         public List<InventoryImage> Images { get; set; }   
         public string Id { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }
