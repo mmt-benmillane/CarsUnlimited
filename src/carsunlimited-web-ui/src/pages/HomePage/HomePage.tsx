@@ -6,7 +6,7 @@ import Layout from '../../layouts/MainLayout';
 import styles from './HomePage.module.css';
 import Carousel from './../../components/Carousel/Carousel';
 import { Grid } from '@mui/material';
-import LatestProducts from '../../components/LatestProducts/LatestProducts';
+import LatestProductsComponent from '../../components/LatestProducts/LatestProducts';
 
 const HomePage = () => (
 
@@ -17,16 +17,16 @@ const HomePage = () => (
           <Carousel />
         </Grid>              
         <Grid item xs={12}>
-          <LatestProducts category="Car" />
+          <LatestProductsComponent category="Car" displayName="Cars" />
         </Grid>
         <Grid item xs={12}>
-          <LatestProducts category="Parts" />
+          <LatestProductsComponent category="Part" displayName="Parts" />
         </Grid>
         <Grid item xs={12}>
-          <LatestProducts category="Offers" />
+          <LatestProductsComponent category="Offer" displayName="Offers" />
         </Grid>
         <Grid item xs={12}>
-          <LatestProducts category="Accessories" />
+          <LatestProductsComponent category="Accessory" displayName="Accessories" />
         </Grid>
       </Grid>
     </div>

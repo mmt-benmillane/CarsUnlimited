@@ -4,7 +4,7 @@ import Grid from '@mui/material/Grid';
 import Layout from "../../layouts/MainLayout";
 
 import styles from "./Inventory.module.css";
-import ProductCard from "../../components/ProductCard/ProductCard";
+//import ProductCard from "../../components/ProductCard/ProductCard";
 
 type Props = {
   category?: string

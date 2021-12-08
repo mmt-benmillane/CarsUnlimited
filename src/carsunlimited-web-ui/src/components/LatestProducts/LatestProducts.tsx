@@ -9,6 +9,7 @@ import ProductCard from "../ProductCard/ProductCard";
 
 type LatestProductsProps = {
   category: string;
+  displayName?: string;
 };
 
 const API_URL = process.env.REACT_APP_API_URL;
@@ -42,7 +43,7 @@ const LatestProducts = ({category}: LatestProductsProps) => {
   
 }
 
-const LatestProductsComponent = ({category}: LatestProductsProps) => {
+const LatestProductsComponent = ({category, displayName}: LatestProductsProps) => {
   return (
     <Grid container spacing={3}>
       <Grid item xs={12}>
@@ -53,7 +54,7 @@ const LatestProductsComponent = ({category}: LatestProductsProps) => {
           sx={{ borderBottom: 1, borderColor: "divider" }}
           style={{ textTransform: "uppercase" }}
         >
-          <strong>LATEST {category}</strong>
+          <strong>LATEST {displayName}</strong>
         </Typography>
       </Grid>
       <LatestProducts category={category} />
