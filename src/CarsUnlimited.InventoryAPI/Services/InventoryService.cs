@@ -16,20 +16,16 @@ namespace CarsUnlimited.InventoryAPI.Services
         }
 
         public List<InventoryItem> Get() =>
-            _inventoryItemRepository.AsQueryable().ToList();
+            _inventoryItemRepository.AsQueryable().OrderBy(x => x.Manufacturer).ThenBy(x => x.Model).ToList();
 
         public InventoryItem Get(string id) =>
             _inventoryItemRepository.FindById(id);
 
         public List<InventoryItem> GetByCategory(string category) =>
-            _inventoryItemRepository.AsQueryable().Where(x => x.Category == category).ToList();
+            _inventoryItemRepository.FilterBy(x => x.Category == category).OrderBy(x => x.Manufacturer).ThenBy(x => x.Model).ToList();
 
         public List<InventoryItem> GetLatestByCategory(string category) =>
-            _inventoryItemRepository.AsQueryable()
-                .Where(x => x.Category == category)
-                .OrderByDescending(x => x.CreatedDate)
-                .Take(3)
-                .ToList();
+            _inventoryItemRepository.FilterBy(x => x.Category == category).OrderByDescending(x => x.CreatedDate).Take(3).ToList();
 
         public void Update(InventoryItem itemIn) =>
             _inventoryItemRepository.ReplaceOne(itemIn);
