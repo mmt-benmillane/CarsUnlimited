@@ -1,62 +1,64 @@
 import { Grid, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
-//import ProductCard from "../ProductCard/ProductCard";
-//import InventoryItem from "../../models/InventoryItem";
+import React from "react";
+import axios from "axios";
+import { useQuery } from "react-query";
+import InventoryItem from "../../models/InventoryItem.d";
+import ProductCard from "../ProductCard/ProductCard";
+
 //import styles from "./LatestProducts.module.css";
 
 type LatestProductsProps = {
-  name: string;
+  category: string;
 };
 
-function LatestProducts({ name }: LatestProductsProps) {
-  const [error, setError] = useState(null);
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [items, setItems] = useState([]);
+const API_URL = process.env.REACT_APP_API_URL;
+ 
+// const getInventoryImage = (images = []) => {
+//   return images.find(image => image.isPrimary) || images[0];
+// };
 
-  useEffect(() => {
-    fetch("{process.env.REACT_APP_API_URL}/Inventory/{name}/latest")
-      .then((res) => res.json())
-      .then(
-        (result) => {
-          setIsLoaded(true);
-          setItems(result);
-        },
-        (error) => {
-          setIsLoaded(true);
-          setError(error);
-        }
-      );
-  }, []);
 
-  if (error) {
-    return <div>Error: {error}</div>;
-  } else if (!isLoaded) {
-    return <div>Loading...</div>;
-  } else {
-    return (
-      <Grid container spacing={3}>
-        <Grid item xs={12}>
-          <Typography
-            variant="h6"
-            color="inherit"
-            noWrap
-            sx={{ borderBottom: 1, borderColor: "divider" }}
-            style={{ textTransform: "uppercase" }}
-          >
-            <strong>LATEST {name}</strong>
-          </Typography>
-        </Grid>
-        {items.map((item) => (     
-          console.log(item)   
-          // <div>
-          //   <Grid item xs>
-          //     <ProductCard manufacturer={item} model={item}/>
-          //   </Grid>
-          // </div>
-        ))}
-      </Grid>
+const LatestProducts = ({category}: LatestProductsProps) => {
+  const fetchLatestProducts = async () => {
+    const response = await axios.get(
+      `${API_URL}/Inventory/${category}/latest`
     );
+    return response.data;
+  };
+
+  const { isLoading, error, data } = useQuery("latestProducts", fetchLatestProducts);
+  if (isLoading) {
+    return <div>Loading...</div>;
+  } 
+  if (error) {
+    return <div>Error!</div>;
   }
+
+  return data?.map((product: InventoryItem) => (
+    <Grid item xs>
+      <ProductCard item={product} />
+    </Grid>
+  ));
+  
 }
 
-export default LatestProducts;
+const LatestProductsComponent = ({category}: LatestProductsProps) => {
+  return (
+    <Grid container spacing={3}>
+      <Grid item xs={12}>
+        <Typography
+          variant="h6"
+          color="inherit"
+          noWrap
+          sx={{ borderBottom: 1, borderColor: "divider" }}
+          style={{ textTransform: "uppercase" }}
+        >
+          <strong>LATEST {category}</strong>
+        </Typography>
+      </Grid>
+      <LatestProducts category={category} />
+    </Grid>
+  );
+};
+
+export default LatestProductsComponent;

@@ -5,7 +5,7 @@ import LatestProducts from './LatestProducts';
 
 describe('<LatestProducts />', () => {
   test('it should mount', () => {
-    render(<LatestProducts />);
+    render(<LatestProducts name="Products" />);
     
     const latestProducts = screen.getByTestId('LatestProducts');
 

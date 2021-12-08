@@ -17,13 +17,16 @@ const HomePage = () => (
           <Carousel />
         </Grid>              
         <Grid item xs={12}>
-          <LatestProducts name="Cars" />
+          <LatestProducts category="Car" />
         </Grid>
         <Grid item xs={12}>
-          <LatestProducts name="Parts & Accessories" />
+          <LatestProducts category="Parts" />
         </Grid>
         <Grid item xs={12}>
-          <LatestProducts name="Offers" />
+          <LatestProducts category="Offers" />
+        </Grid>
+        <Grid item xs={12}>
+          <LatestProducts category="Accessories" />
         </Grid>
       </Grid>
     </div>

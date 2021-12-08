@@ -25,6 +25,7 @@ const Navigation = () => (
         <Button href="/Cars">Cars</Button>
         <Button href="/Parts">Parts</Button>
         <Button href="/Accessories">Accessories</Button>
+        <Button href="/Offers">Offers</Button>
       </Stack>
       <FormControl variant="standard">
         <Input

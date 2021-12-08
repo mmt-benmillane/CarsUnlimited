@@ -23,5 +23,6 @@ services:
    - TracingConfiguration__Exporter=-1
    - TracingConfiguration__JaegerEndpoint__Host=jaeger
    - TracingConfiguration__JaegerEndpoint__Port=6831
+   - AllowedOrigins="http://localhost:3000"
    depends_on:
     - inventorydb    

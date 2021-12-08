@@ -7,18 +7,19 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import Rating from "../Rating/Rating";
 
+import InventoryItem from "../../models/InventoryItem.d";
+
 import { Link } from "react-router-dom";
 
 type Props = {
-  manufacturer: string,
-  model: string
+  item: InventoryItem;
 }
 
-export default function ProductCard({ manufacturer, model }: Props) {
+export default function ProductCard({ item }: Props) {
 
   return (
     <div className={styles.ProductCard} data-testid="ProductCard">
-    <Link to={`/Product/${manufacturer}/${model}`}>
+    <Link to={`/Product/${item.manufacturer}/${item.model}`}>
       <Card sx={{ maxWidth: 345 }}>
         <CardMedia
           component="img"
@@ -28,13 +29,13 @@ export default function ProductCard({ manufacturer, model }: Props) {
         />
         <CardContent>
           <Typography gutterBottom variant="h6" component="div">
-            {manufacturer} {model}
+            {item.manufacturer} {item.model}
           </Typography>
           <Typography variant="body2" color="text.secondary">
             <Rating showLabel={false} />
           </Typography>
           <Typography variant="button" color="text.secondary" align="right">
-            <strong>&pound;[[Price]]</strong>
+            <strong>&pound;{item.price.toLocaleString(navigator.language, { minimumFractionDigits: 2 })}</strong>
           </Typography>
         </CardContent>
       </Card>
