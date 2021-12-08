@@ -13,26 +13,33 @@ type LatestProductsProps = {
 };
 
 const API_URL = process.env.REACT_APP_API_URL;
- 
-// const getInventoryImage = (images = []) => {
-//   return images.find(image => image.isPrimary) || images[0];
-// };
 
+const fetchLatestProducts = async (category: string) => {
+  const response = await axios.get(
+    `${API_URL}/Inventory/${category}/latest`
+  );
+  return response.data;
+};
 
 const LatestProducts = ({category}: LatestProductsProps) => {
-  const fetchLatestProducts = async () => {
-    const response = await axios.get(
-      `${API_URL}/Inventory/${category}/latest`
-    );
-    return response.data;
-  };
 
-  const { isLoading, error, data } = useQuery("latestProducts", fetchLatestProducts);
+  const { isLoading, error, data } = useQuery(`latest-${category}-products`, () => fetchLatestProducts(category));
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <span>Loading...</span>;
   } 
   if (error) {
-    return <div>Error!</div>;
+    return (
+      <Grid item xs>
+        Error!
+      </Grid>
+    );
+  }
+  if(data.length === 0) {
+    return (
+      <Grid item xs>
+        No products to display
+      </Grid>
+    );
   }
 
   return data?.map((product: InventoryItem) => (

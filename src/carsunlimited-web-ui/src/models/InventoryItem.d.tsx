@@ -8,7 +8,12 @@ export default interface InventoryItem {
     price: number;
     sku: string;
     description: string;    
-    images?: [];
+    images: InventoryImage[];
     inStock: number;
     createdDate: Date;
+}
+
+export interface InventoryImage {
+    imageUrl: string;
+    isPrimary: boolean;
 }

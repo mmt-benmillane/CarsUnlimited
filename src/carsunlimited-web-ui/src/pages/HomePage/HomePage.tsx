@@ -22,9 +22,9 @@ const HomePage = () => (
         <Grid item xs={12}>
           <LatestProductsComponent category="Part" displayName="Parts" />
         </Grid>
-        <Grid item xs={12}>
+        {/* <Grid item xs={12}>
           <LatestProductsComponent category="Offer" displayName="Offers" />
-        </Grid>
+        </Grid> */}
         <Grid item xs={12}>
           <LatestProductsComponent category="Accessory" displayName="Accessories" />
         </Grid>

@@ -16,9 +16,9 @@ ReactDOM.render(
       <Router>
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/Cars" element={<Inventory category="Car" />} />
-          <Route path="/Accessories" element={<Inventory category="Accessory" />} />
-          <Route path="/Parts" element={<Inventory category="Part" />} />
+          <Route path="/Cars" element={<Inventory category="Car" displayName="Cars" />} />
+          <Route path="/Accessories" element={<Inventory category="Accessory" displayName="Accessories" />} />
+          <Route path="/Parts" element={<Inventory category="Part" displayName="Parts" />} />
           <Route path="/Product/:manufacturer/:model" element={<Product />} />
         </Routes>
       </Router>

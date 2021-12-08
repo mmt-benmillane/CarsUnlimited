@@ -7,13 +7,16 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import Rating from "../Rating/Rating";
 
-import InventoryItem from "../../models/InventoryItem.d";
+import InventoryItem, { InventoryImage } from "../../models/InventoryItem.d";
 
 import { Link } from "react-router-dom";
 
 type Props = {
   item: InventoryItem;
 }
+const getInventoryImage = (images: InventoryImage[]) => {
+  return images.find((image: InventoryImage) => image.isPrimary) || images[0] || "https://dummyimage.com/300x200/eee/aaa.png&text=No+image+available";
+};
 
 export default function ProductCard({ item }: Props) {
 
@@ -24,8 +27,8 @@ export default function ProductCard({ item }: Props) {
         <CardMedia
           component="img"
           height="200"
-          image="https://via.placeholder.com/300x200"
-          alt="Placeholder"
+          image={getInventoryImage(item.images).imageUrl}
+          alt="{item.manufacturer} {item.model}"
         />
         <CardContent>
           <Typography gutterBottom variant="h6" component="div">
