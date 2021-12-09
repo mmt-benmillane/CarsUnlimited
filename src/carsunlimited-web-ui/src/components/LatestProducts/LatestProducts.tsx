@@ -4,7 +4,7 @@ import axios from "axios";
 import { useQuery } from "react-query";
 import InventoryItem from "../../models/InventoryItem.d";
 import ProductCard from "../ProductCard/ProductCard";
-
+import Skeleton from '@mui/material/Skeleton';
 //import styles from "./LatestProducts.module.css";
 
 type LatestProductsProps = {
@@ -25,7 +25,19 @@ const LatestProducts = ({category}: LatestProductsProps) => {
 
   const { isLoading, error, data } = useQuery(`latest-${category}-products`, () => fetchLatestProducts(category));
   if (isLoading) {
-    return <span>Loading...</span>;
+    return (
+      <Grid container spacing={3}>
+        <Grid item xs>
+          <Skeleton variant="rectangular" width={345} height={400} />
+        </Grid>
+        <Grid item xs>
+          <Skeleton variant="rectangular" width={345} height={400} />
+        </Grid>
+        <Grid item xs>
+          <Skeleton variant="rectangular" width={345} height={400} />
+        </Grid>
+      </Grid>
+    );
   } 
   if (error) {
     return (

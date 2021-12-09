@@ -80,6 +80,22 @@ namespace CarsUnlimited.InventoryAPI.Controllers
             }
         }
 
+        [HttpGet("{manufacturer}/{model}")]
+        public ActionResult<InventoryItem> GetByManufacturerAndModel(string manufacturer, string model)
+        {
+            _logger.LogInformation($"GetByManufacturerAndModel: Looking up {manufacturer} {model}");
+
+            var inventoryItem = _inventoryService.GetByManufacturerAndModel(manufacturer, model);
+
+            if (inventoryItem is null)
+            {
+                _logger.LogError($"GetByManufacturerAndModel: No item found with manufacturer {manufacturer} and model {model}");
+                return NotFound();
+            }
+
+            return inventoryItem;
+        }
+
         [HttpPut]
         [Route("update-stock")]
         public IActionResult UpdateStock([FromHeader(Name = "X-CarsUnlimited-InventoryApiKey")] string inventoryApiKey, InventoryMessage inventoryMessage)

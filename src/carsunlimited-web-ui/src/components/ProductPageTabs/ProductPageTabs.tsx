@@ -1,10 +1,15 @@
 import { Box, Tabs, Tab, Typography } from '@mui/material';
 import React from 'react';
+import InventoryItem from '../../models/InventoryItem.d';
 
 interface TabPanelProps {
   children?: React.ReactNode;
   index: number;
   value: number;
+}
+
+interface ProductPageTabsProps {
+  product: InventoryItem;
 }
 
 function TabPanel(props: TabPanelProps) {
@@ -34,7 +39,7 @@ function a11yProps(index: number) {
   };
 }
 
-export default function ProductPageTabs() {
+export default function ProductPageTabs({product}: ProductPageTabsProps) {
   const [value, setValue] = React.useState(0);
 
   const handleChange = (event: React.SyntheticEvent, newValue: number) => {
@@ -45,15 +50,11 @@ export default function ProductPageTabs() {
     <Box sx={{ width: '100%' }}>
     <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
       <Tabs value={value} onChange={handleChange} aria-label="Tabs">
-        <Tab label="Description" {...a11yProps(0)} />
-        <Tab label="Review (10)" {...a11yProps(1)} />
+        <Tab label="Description" {...a11yProps(0)} />      
       </Tabs>
     </Box>
     <TabPanel value={value} index={0}>
-      The BMW X5 offers driving pleasure on any terrain thanks to the enhanced BMW TwinPower Turbo power unit and the outstanding traction of BMW xDrive all-wheel drive. The optional xOffroad package provides finer tuning: four selectable off-road modes adjust the all-wheel drive precisely to the current ground conditions.
-    </TabPanel>
-    <TabPanel value={value} index={1}>
-      Item Two
+      {product.description}
     </TabPanel>
   </Box>
   );

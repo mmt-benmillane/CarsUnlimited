@@ -21,6 +21,9 @@ namespace CarsUnlimited.InventoryAPI.Services
         public InventoryItem Get(string id) =>
             _inventoryItemRepository.FindById(id);
 
+        public InventoryItem GetByManufacturerAndModel(string manufacturer, string model) =>
+            _inventoryItemRepository.FindOne(x => x.Manufacturer == manufacturer && x.Model == model);        
+
         public List<InventoryItem> GetByCategory(string category) =>
             _inventoryItemRepository.FilterBy(x => x.Category == category).OrderBy(x => x.Manufacturer).ThenBy(x => x.Model).ToList();
 
