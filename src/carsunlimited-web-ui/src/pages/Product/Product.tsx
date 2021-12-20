@@ -1,10 +1,7 @@
-import { Grid, Skeleton, Typography, Button } from "@mui/material";
+import { Grid, Skeleton, Typography } from "@mui/material";
 import React from "react";
 import { useParams } from "react-router-dom";
 import Layout from "../../layouts/MainLayout";
-
-import "../../helpers/FontAwesome";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import styles from "./Product.module.css";
 //import {  blue, deepPurple, green, grey, deepOrange } from "@mui/material/colors";
@@ -13,6 +10,7 @@ import ProductPageTabs from "../../components/ProductPageTabs/ProductPageTabs";
 import InventoryItem, { InventoryImage } from "../../models/InventoryItem.d";
 import axios from "axios";
 import { useQuery } from "react-query";
+import AddToCart from "../../components/AddToCart/AddToCart";
 
 type ProductProps = {
   manufacturer: string;
@@ -96,14 +94,7 @@ function ProductInfo({ manufacturer, model }: ProductProps) {
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  startIcon={<FontAwesomeIcon icon="cart-plus" />}
-                >
-                  Add to cart
-                </Button>
+                <AddToCart manufacturer={product.manufacturer} model={product.model} />
               </Grid>
             </Grid>
           </Grid>
