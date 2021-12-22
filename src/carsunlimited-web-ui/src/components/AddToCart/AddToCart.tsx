@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from '@mui/material';
 import axios from 'axios';
+import toast, { Toaster } from 'react-hot-toast';
 import React from 'react';
 
 type AddToCartProps = {
@@ -9,6 +10,15 @@ type AddToCartProps = {
 };
 
 const API_URL = process.env.REACT_APP_CART_API_URL;
+
+const notify = ({ manufacturer, model }: AddToCartProps) => toast.promise(
+  AddItemToCart({ manufacturer, model }),
+  {
+    loading: `Adding ${manufacturer} ${model} to cart...`,
+    success: `Added ${manufacturer} ${model} to cart!`,
+    error: `Failed to add ${manufacturer} ${model} to cart!`,
+  }
+)
 
 const AddItemToCart = async ({ manufacturer, model }: AddToCartProps) => {
   
@@ -29,17 +39,19 @@ const AddItemToCart = async ({ manufacturer, model }: AddToCartProps) => {
 
 function AddToCart({ manufacturer, model }: AddToCartProps) {
 
-
   return (
-    <Button
-      variant="contained"
-      color="primary"
-      size="large"
-      startIcon={<FontAwesomeIcon icon="cart-plus" />}
-      onClick={() => {AddItemToCart({ manufacturer, model })}}
-    >
-      Add to cart
-    </Button>
+    <div>
+      <Button
+        variant="contained"
+        color="primary"
+        size="large"
+        startIcon={<FontAwesomeIcon icon="cart-plus" />}
+        onClick={() => {notify({ manufacturer, model })}}
+      >
+        Add to cart
+      </Button>
+      <Toaster />
+    </div>
   );
 }
 
