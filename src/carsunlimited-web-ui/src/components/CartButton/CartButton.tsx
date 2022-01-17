@@ -1,7 +1,7 @@
 import '../../helpers/FontAwesome';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from '@mui/material';
-import React, { Component } from 'react';
+import React from 'react';
 import axios from 'axios';
 
 const API_URL = process.env.REACT_APP_CART_API_URL;
@@ -10,31 +10,22 @@ const headers = {
   'X-CarsUnlimited-SessionId': sessionId
 }
 
-class CartButton extends Component {
-  state = {
-    itemCount: 0
-  }
+export default function CartButton() {
+  const [cartItems, setCartItems] = React.useState(0);
 
-  componentDidMount() {
-    axios.get(`${API_URL}/Cart/get-cart-items-count`, { headers })
-      .then(response => {
-        this.setState({ itemCount: response.data });
+  React.useEffect(() => {
+    axios.get(`${API_URL}/cart/get-cart-items-count`, { headers })
+      .then(res => {
+        setCartItems(res.data);
       })
-      .catch(error => {
-        console.error('An error occurred!', error);
+      .catch(err => {
+        console.log(err);
       });
-  }
+  }, []);
 
-  render() {
-    return (
-      <div>
-        <Button variant="outlined" startIcon={<FontAwesomeIcon icon={['fas', 'shopping-basket']} />}>
-          {this.state.itemCount}
-        </Button>
-      </div>
-    );
-  }
+  return (
+    <Button variant="outlined" startIcon={<FontAwesomeIcon icon={['fas', 'shopping-basket']} />} id='CartButton'>
+      {cartItems}
+    </Button>
+  );
 }
-
-
-export default CartButton;

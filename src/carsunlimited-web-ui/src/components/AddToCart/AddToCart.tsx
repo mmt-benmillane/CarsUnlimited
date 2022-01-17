@@ -35,6 +35,19 @@ const AddItemToCart = async ({ manufacturer, model }: AddToCartProps) => {
               .catch(error => {
                 console.error('An error occurred!', error);
               });
+
+  const [cartItems, setCartItems] = React.useState(0);
+  React.useEffect(() => {
+    axios.get(`${API_URL}/cart/get-cart-items-count`, { headers })
+      .then(res => {
+        setCartItems(res.data);
+        console.log(`Cart items count: ${res.data}`);
+        console.log(`Cart items count: ${cartItems}`);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, []);
 };
 
 function AddToCart({ manufacturer, model }: AddToCartProps) {
