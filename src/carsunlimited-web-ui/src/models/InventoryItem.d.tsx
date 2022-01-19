@@ -1,6 +1,4 @@
-import React from "react";
-
-export default interface InventoryItem {
+export interface InventoryItem {
     id: string;
     manufacturer: string;
     model: string;
@@ -17,3 +15,5 @@ export interface InventoryImage {
     imageUrl: string;
     isPrimary: boolean;
 }
+
+export class InventoryItem implements InventoryItem {};

@@ -2,70 +2,69 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Button } from '@mui/material';
 import axios from 'axios';
 import toast, { Toaster } from 'react-hot-toast';
+import { useMutation, useQueryClient } from 'react-query';
 import React from 'react';
 
 type AddToCartProps = {
-  manufacturer: string;
-  model: string;
+  id: string;
+  inStock: boolean;
 };
 
 const API_URL = process.env.REACT_APP_CART_API_URL;
 
-const notify = ({ manufacturer, model }: AddToCartProps) => toast.promise(
-  AddItemToCart({ manufacturer, model }),
-  {
-    loading: `Adding ${manufacturer} ${model} to cart...`,
-    success: `Added ${manufacturer} ${model} to cart!`,
-    error: `Failed to add ${manufacturer} ${model} to cart!`,
-  }
-)
-
-const AddItemToCart = async ({ manufacturer, model }: AddToCartProps) => {
+const addItemToCart = async ({ id }: AddToCartProps) => {
   
   const sessionId = localStorage.getItem("sessionId") || '';
   const headers = {
     'X-CarsUnlimited-SessionId': sessionId
   }
 
-  console.log(`Add ${manufacturer} ${model} to cart`);
-  const itemId = `${manufacturer}_${model}`;
-  const cartItem = { itemid: itemId, count: 1 };
+  const cartItem = { id: id, count: 1 };
   
-  await axios.post(`${API_URL}/Cart/add-to-cart`, cartItem, { headers })
+  await axios.post(`${API_URL}/Cart/add-to-cart`, cartItem, { headers })                             
               .catch(error => {
                 console.error('An error occurred!', error);
               });
-
-  const [cartItems, setCartItems] = React.useState(0);
-  React.useEffect(() => {
-    axios.get(`${API_URL}/cart/get-cart-items-count`, { headers })
-      .then(res => {
-        setCartItems(res.data);
-        console.log(`Cart items count: ${res.data}`);
-        console.log(`Cart items count: ${cartItems}`);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }, []);
-};
-
-function AddToCart({ manufacturer, model }: AddToCartProps) {
-
-  return (
-    <div>
-      <Button
-        variant="contained"
-        color="primary"
-        size="large"
-        startIcon={<FontAwesomeIcon icon="cart-plus" />}
-        onClick={() => {notify({ manufacturer, model })}}
-      >
-        Add to cart
-      </Button>
-      <Toaster />
-    </div>
-  );
 }
 
-export default AddToCart;
+export default function AddToCart({ id, inStock = true }: AddToCartProps) {
+  const client = useQueryClient();
+  const mutation = useMutation(addItemToCart, {
+    onSuccess: () => {
+      client.invalidateQueries('cart-item-count');
+      toast.success('Item added to cart!');
+    },
+  });
+
+  if(inStock) {
+    return (
+      <div>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          startIcon={<FontAwesomeIcon icon="cart-plus" />}
+          onClick={() => {mutation.mutate({ id, inStock })}}
+        >
+          Add to cart
+        </Button>
+        <Toaster />
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <Button
+          variant="contained"
+          color="error"
+          size="large"
+          startIcon={<FontAwesomeIcon icon="cart-plus" />}
+          disabled
+        >
+          Out of stock
+        </Button>
+        <Toaster />
+      </div>
+    );
+  }
+}

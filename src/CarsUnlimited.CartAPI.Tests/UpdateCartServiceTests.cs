@@ -36,7 +36,7 @@ namespace CarsUnlimited.CartAPI.Tests
             _mockIConnection = new Mock<IConnection>();
             _mockIModel = new Mock<IModel>();
 
-            _mockGetCartItems.Setup(x => x.GetItemsInCart(It.IsAny<string>())).ReturnsAsync(new List<CartItem>(){ new CartItem() { SessionId = "1", ItemId = "3" }, new CartItem() { SessionId = "2", ItemId = "4" } });
+            _mockGetCartItems.Setup(x => x.GetItemsInCart(It.IsAny<string>())).ReturnsAsync(new List<CartItem>(){ new CartItem() { SessionId = "1", Id = "3" }, new CartItem() { SessionId = "2", Id = "4" } });
         }
 
         [TestMethod]

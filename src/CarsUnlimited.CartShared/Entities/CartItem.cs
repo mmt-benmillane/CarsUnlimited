@@ -8,7 +8,7 @@ namespace CarsUnlimited.CartShared.Entities
     public class CartItem
     {
         public string SessionId { get; set; }
-        public string ItemId { get; set; }
+        public string Id { get; set; }
         public int Count { get; set; }
     }
 }

@@ -7,7 +7,7 @@ import styles from "./Product.module.css";
 //import {  blue, deepPurple, green, grey, deepOrange } from "@mui/material/colors";
 //import Rating from "../../components/Rating/Rating";
 import ProductPageTabs from "../../components/ProductPageTabs/ProductPageTabs";
-import InventoryItem, { InventoryImage } from "../../models/InventoryItem.d";
+import { InventoryItem, InventoryImage } from "../../models/InventoryItem.d";
 import axios from "axios";
 import { useQuery } from "react-query";
 import AddToCart from "../../components/AddToCart/AddToCart";
@@ -17,7 +17,7 @@ type ProductProps = {
   model: string;
 };
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_INVENTORY_API_URL;
 
 const fetchProduct = async (manufacturer: string, model: string) => {
   const response = await axios.get(
@@ -60,6 +60,7 @@ function ProductInfo({ manufacturer, model }: ProductProps) {
   }
 
   const product: InventoryItem = data;
+  const inStock = product.inStock > 0 ? true : false;
 
   return (      
         <Grid container spacing={0}>
@@ -94,7 +95,7 @@ function ProductInfo({ manufacturer, model }: ProductProps) {
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <AddToCart manufacturer={product.manufacturer} model={product.model} />
+                <AddToCart id={product.id} inStock={inStock} />
               </Grid>
             </Grid>
           </Grid>

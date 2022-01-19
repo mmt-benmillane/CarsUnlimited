@@ -1,6 +1,6 @@
 import { Box, Tabs, Tab, Typography } from '@mui/material';
 import React from 'react';
-import InventoryItem from '../../models/InventoryItem.d';
+import {InventoryItem} from '../../models/InventoryItem.d';
 
 interface TabPanelProps {
   children?: React.ReactNode;

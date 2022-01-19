@@ -85,11 +85,11 @@ namespace CarsUnlimited.CartAPI.Controllers
 
         [HttpGet]
         [Route("delete-item-from-cart")]
-        public async Task<IActionResult> DeleteItemFromCart([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId, string carId)
+        public async Task<IActionResult> DeleteItemFromCart([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId, string id)
         {
-            if(!string.IsNullOrWhiteSpace(sessionId) && !string.IsNullOrWhiteSpace(carId))
+            if(!string.IsNullOrWhiteSpace(sessionId) && !string.IsNullOrWhiteSpace(id))
             {
-                return StatusCode(200, await _cartService.DeleteFromCart(sessionId, carId));
+                return StatusCode(200, await _cartService.DeleteFromCart(sessionId, id));
             }
 
             return StatusCode(404);

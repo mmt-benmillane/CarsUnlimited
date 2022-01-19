@@ -4,9 +4,10 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import 'reflect-metadata';
 
 //pages
-import { HomePage, Inventory, Product } from './pages';
+import { Cart, HomePage, Inventory, Product } from './pages';
 
 const queryClient = new QueryClient()
 
@@ -20,6 +21,7 @@ ReactDOM.render(
           <Route path="/Accessories" element={<Inventory category="Accessory" displayName="Accessories" />} />
           <Route path="/Parts" element={<Inventory category="Part" displayName="Parts" />} />
           <Route path="/Product/:manufacturer/:model" element={<Product />} />
+          <Route path="/Cart" element={<Cart />} />
         </Routes>
       </Router>
     </QueryClientProvider>

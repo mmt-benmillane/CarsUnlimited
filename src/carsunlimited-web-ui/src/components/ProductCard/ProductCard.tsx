@@ -7,7 +7,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 //import Rating from "../Rating/Rating";
 
-import InventoryItem, { InventoryImage } from "../../models/InventoryItem.d";
+import { InventoryImage, InventoryItem } from "../../models/InventoryItem.d";
 
 import { Link } from "react-router-dom";
 

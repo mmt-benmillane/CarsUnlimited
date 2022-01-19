@@ -103,13 +103,13 @@ namespace CarsUnlimited.InventoryAPI.Controllers
             if (!string.IsNullOrWhiteSpace(inventoryApiKey) && inventoryApiKey == _config.GetValue<string>("InventoryApiKey"))
             {
 
-                _logger.LogInformation($"UpdateStock: Looking up item {inventoryMessage.ItemId}");
+                _logger.LogInformation($"UpdateStock: Looking up item {inventoryMessage.Id}");
 
-                var inventoryItem = _inventoryService.Get(inventoryMessage.ItemId);
+                var inventoryItem = _inventoryService.Get(inventoryMessage.Id);
 
                 if (inventoryItem is null)
                 {
-                    _logger.LogInformation($"UpdateStock: No item found with ID {inventoryMessage.ItemId}");
+                    _logger.LogInformation($"UpdateStock: No item found with ID {inventoryMessage.Id}");
                     return NotFound();
                 }
 

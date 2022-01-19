@@ -7,7 +7,7 @@ import styles from "./Inventory.module.css";
 import axios from "axios";
 import { useQuery } from "react-query";
 import ProductCard from "../../components/ProductCard/ProductCard";
-import InventoryItem from "../../models/InventoryItem.d";
+import { InventoryItem } from "../../models/InventoryItem.d";
 import { Skeleton } from "@mui/material";
 
 type Props = {
@@ -15,7 +15,7 @@ type Props = {
   displayName?: string
 };
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_INVENTORY_API_URL;
 
 const fetchProducts = async (category: string) => {
   const response = await axios.get(

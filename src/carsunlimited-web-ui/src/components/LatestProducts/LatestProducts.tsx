@@ -2,7 +2,7 @@ import { Grid, Typography } from "@mui/material";
 import React from "react";
 import axios from "axios";
 import { useQuery } from "react-query";
-import InventoryItem from "../../models/InventoryItem.d";
+import { InventoryItem } from "../../models/InventoryItem.d";
 import ProductCard from "../ProductCard/ProductCard";
 import Skeleton from '@mui/material/Skeleton';
 //import styles from "./LatestProducts.module.css";
@@ -12,7 +12,7 @@ type LatestProductsProps = {
   displayName?: string;
 };
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_APP_INVENTORY_API_URL;
 
 const fetchLatestProducts = async (category: string) => {
   const response = await axios.get(
