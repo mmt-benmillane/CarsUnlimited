@@ -1,20 +1,22 @@
 import axios from 'axios';
 import React from 'react';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 import CartItem from '../../models/CartItem.d';
 import { InventoryItem, InventoryImage } from '../../models/InventoryItem.d';
 import styles from './CartItemCard.module.css';
 import { plainToClass } from 'class-transformer';
 import { Button, Grid } from '@mui/material';
+import toast from 'react-hot-toast';
 
 type Props = {
   item: CartItem;
 };
 
-const API_URL = process.env.REACT_APP_INVENTORY_API_URL;
+const INVENTORY_API_URL = process.env.REACT_APP_INVENTORY_API_URL;
+const CART_API_URL = process.env.REACT_APP_CART_API_URL;
 
 const getInventoryItem = async (id: string) => {
-  const response = await axios.get(`${API_URL}/Inventory/${id}`);
+  const response = await axios.get(`${INVENTORY_API_URL}/Inventory/${id}`);
   return response.data;
 };
 
@@ -22,8 +24,28 @@ const getInventoryImage = (images: InventoryImage[]) => {
   return images.find((image: InventoryImage) => image.isPrimary) || images[0] || "https://dummyimage.com/300x200/eee/aaa.png&text=No+image+available";
 };
 
-const CartItemCard = ({ item }: Props) => {
+const deleteItemFromCart = async (id: string) => {
+  const sessionId = localStorage.getItem("sessionId") || '';
+  const headers = {
+    'X-CarsUnlimited-SessionId': sessionId
+  }
+
+  await axios.get(`${CART_API_URL}/Cart/delete-item-from-cart?id=${id}`, { headers })
+              .catch(error => {
+                console.error('An error occurred!', error);
+              });
+};
+
+export default function CartItemCard({ item }: Props) {
   const {isLoading, error, data} = useQuery(`inventory-item-${item.id}`, () => getInventoryItem(item.id));
+  const client = useQueryClient();
+  const deleteItemFromCartMutation = useMutation(deleteItemFromCart, {
+    onSuccess: () => {
+      client.invalidateQueries('cart-items');
+      client.invalidateQueries('cart-item-count');
+      toast.success('Item removed from cart.');
+    } 
+  });
   
   if (isLoading) {
     return <div>Loading...</div>
@@ -58,11 +80,9 @@ const CartItemCard = ({ item }: Props) => {
           &pound;{(inventoryItem.price * item.count).toLocaleString(navigator.language, { minimumFractionDigits: 2 })}
         </Grid>
         <Grid item xs={2}>
-          <Button>Remove</Button>
+          <Button onClick={() => {deleteItemFromCartMutation.mutate(item.id)}}>Remove</Button>
         </Grid>
       </Grid>
     </div>
   );
 };
-
-export default CartItemCard;

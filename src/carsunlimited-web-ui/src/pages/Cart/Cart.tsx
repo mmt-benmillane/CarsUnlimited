@@ -66,7 +66,17 @@ const Cart = () => (
           <strong>Total Price</strong>
         </Grid>
         <Grid item xs={2}></Grid>        
+      </Grid>
+      <Divider sx={{marginBottom: '5px'}} />
+      <Grid container spacing={{ xs: 1 }}>    
         <CartItems />
+      </Grid>
+      <Divider />
+      <Grid container spacing={{ xs: 1 }}>    
+        <Grid item xs={8}></Grid>
+        <Grid item xs={4}>
+          [TOTAL]
+        </Grid>
       </Grid>
     </div>
   </Layout>
