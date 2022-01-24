@@ -95,7 +95,12 @@ function ProductInfo({ manufacturer, model }: ProductProps) {
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <AddToCart id={product.id} inStock={inStock} />
+                {
+                  /*
+                  THIS IS A GAPING SECURITY ISSUE. DON'T DO THIS IRL! OPEN TO SUGGESTIONS ON FIXING IT
+                  */
+                }
+                <AddToCart id={product.id} price={product.price} inStock={inStock} />
               </Grid>
             </Grid>
           </Grid>

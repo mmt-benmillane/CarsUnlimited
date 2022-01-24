@@ -8,18 +8,19 @@ import React from 'react';
 type AddToCartProps = {
   id: string;
   inStock: boolean;
+  price: number;
 };
 
 const API_URL = process.env.REACT_APP_CART_API_URL;
 
-const addItemToCart = async ({ id }: AddToCartProps) => {
+const addItemToCart = async ({ id, price }: AddToCartProps) => {
   
   const sessionId = localStorage.getItem("sessionId") || '';
   const headers = {
     'X-CarsUnlimited-SessionId': sessionId
   }
 
-  const cartItem = { id: id, count: 1 };
+  const cartItem = { id: id, price: price, count: 1 };
   
   await axios.post(`${API_URL}/Cart/add-to-cart`, cartItem, { headers })                             
               .catch(error => {
@@ -27,7 +28,7 @@ const addItemToCart = async ({ id }: AddToCartProps) => {
               });
 }
 
-export default function AddToCart({ id, inStock = true }: AddToCartProps) {
+export default function AddToCart({ id, price, inStock = true }: AddToCartProps) {
   const client = useQueryClient();
   const mutation = useMutation(addItemToCart, {
     onSuccess: () => {
@@ -44,7 +45,7 @@ export default function AddToCart({ id, inStock = true }: AddToCartProps) {
           color="primary"
           size="large"
           startIcon={<FontAwesomeIcon icon="cart-plus" />}
-          onClick={() => {mutation.mutate({ id, inStock })}}
+          onClick={() => {mutation.mutate({ id, price, inStock })}}
         >
           Add to cart
         </Button>

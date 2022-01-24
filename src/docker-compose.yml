@@ -86,7 +86,6 @@ services:
       - ServiceBusConfiguration__HostName=rabbitmq
       - ServiceBusConfiguration__UserName=user
       - ServiceBusConfiguration__Password=bitnami
-      - CartApiKey=THIS_IS_MY_KEY
     depends_on:
       - cartdb
       - rabbitmq

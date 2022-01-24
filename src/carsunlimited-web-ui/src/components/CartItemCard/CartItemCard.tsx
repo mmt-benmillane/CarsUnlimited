@@ -1,7 +1,7 @@
 import axios from 'axios';
 import React from 'react';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import CartItem from '../../models/CartItem.d';
+import { CartItem } from '../../models/CartItem.d';
 import { InventoryItem, InventoryImage } from '../../models/InventoryItem.d';
 import styles from './CartItemCard.module.css';
 import { plainToClass } from 'class-transformer';
