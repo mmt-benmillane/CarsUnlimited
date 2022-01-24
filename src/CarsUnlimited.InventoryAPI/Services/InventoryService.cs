@@ -8,21 +8,30 @@ namespace CarsUnlimited.InventoryAPI.Services
 {
     public class InventoryService : IInventoryService
     {
-        private readonly IMongoRepository<CarItem> _carItemRepository;
+        private readonly IMongoRepository<InventoryItem> _inventoryItemRepository;
 
-        public InventoryService(IMongoRepository<CarItem> carItemRepository)
+        public InventoryService(IMongoRepository<InventoryItem> inventoryItemRepository)
         {
-            _carItemRepository = carItemRepository;
+            _inventoryItemRepository = inventoryItemRepository;
         }
 
+        public List<InventoryItem> Get() =>
+            _inventoryItemRepository.AsQueryable().OrderBy(x => x.Manufacturer).ThenBy(x => x.Model).ToList();
 
-        public List<CarItem> Get() =>
-            _carItemRepository.AsQueryable().ToList();
+        public InventoryItem Get(string id) =>
+            _inventoryItemRepository.FindById(id);
 
-        public CarItem Get(string id) =>
-            _carItemRepository.FindById(id);
+        public InventoryItem GetByManufacturerAndModel(string manufacturer, string model) =>
+            _inventoryItemRepository.FindOne(x => x.Manufacturer == manufacturer && x.Model == model);        
 
-        public void Update(CarItem carIn) =>
-            _carItemRepository.ReplaceOne(carIn);
+        public List<InventoryItem> GetByCategory(string category) =>
+            _inventoryItemRepository.FilterBy(x => x.Category == category).OrderBy(x => x.Manufacturer).ThenBy(x => x.Model).ToList();
+
+        public List<InventoryItem> GetLatestByCategory(string category) =>
+            _inventoryItemRepository.FilterBy(x => x.Category == category).OrderByDescending(x => x.CreatedDate).Take(3).ToList();
+
+        public void Update(InventoryItem itemIn) =>
+            _inventoryItemRepository.ReplaceOne(itemIn);
+
     }
 }

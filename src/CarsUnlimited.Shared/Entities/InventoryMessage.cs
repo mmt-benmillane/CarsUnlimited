@@ -7,7 +7,7 @@ namespace CarsUnlimited.CartShared.Entities
 {
     public class InventoryMessage
     {
-        public string CarId { get; set; }
+        public string Id { get; set; }
         public int StockAdjustment { get; set; }
     }
 }

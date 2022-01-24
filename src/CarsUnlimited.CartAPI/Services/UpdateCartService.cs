@@ -30,11 +30,11 @@ namespace CarsUnlimited.CartAPI.Services
 
         public async Task<bool> AddToCart(CartItem cartItem)
         {
-            var key = $"{cartItem.SessionId}_{cartItem.CarId}";
+            var key = $"{cartItem.SessionId}_{cartItem.Id}";
 
             try
             {
-                _logger.LogInformation($"AddToCart: Adding item {cartItem.CarId} to cart {cartItem.SessionId}");
+                _logger.LogInformation($"AddToCart: Adding item {cartItem.Id} to cart {cartItem.SessionId}");
                 return await _redisCacheClient.GetDbFromConfiguration().AddAsync(key, cartItem, DateTimeOffset.Now.AddHours(4));
             }
             catch (RedisException ex)
@@ -53,7 +53,7 @@ namespace CarsUnlimited.CartAPI.Services
             {
                 InventoryMessage inventoryMessage = new InventoryMessage
                 {
-                    CarId = cartItem.CarId,
+                    Id = cartItem.Id,
                     StockAdjustment = cartItem.Count
                 };
 
@@ -81,11 +81,11 @@ namespace CarsUnlimited.CartAPI.Services
                         return false;
                     }
 
-                    _logger.LogInformation($"CompleteCart: Sent message to cmd-inventory to adjust stock for {inventoryMessage.CarId} by {inventoryMessage.StockAdjustment}");
+                    _logger.LogInformation($"CompleteCart: Sent message to cmd-inventory to adjust stock for {inventoryMessage.Id} by {inventoryMessage.StockAdjustment}");
                 }
 
-                _logger.LogInformation($"CompleteCart: Removing {inventoryMessage.CarId} from cart {cartItem.SessionId}");
-                await DeleteFromCart(cartItem.SessionId, cartItem.CarId);
+                _logger.LogInformation($"CompleteCart: Removing {inventoryMessage.Id} from cart {cartItem.SessionId}");
+                await DeleteFromCart(cartItem.SessionId, cartItem.Id);
             }
 
             return true;
@@ -100,7 +100,7 @@ namespace CarsUnlimited.CartAPI.Services
 
                 foreach(var item in cartItems)
                 {
-                    IdsToDelete.Add($"{item.SessionId}_{item.CarId}");
+                    IdsToDelete.Add($"{item.SessionId}_{item.Id}");
                 }
 
                 try
@@ -119,12 +119,12 @@ namespace CarsUnlimited.CartAPI.Services
             return false;
         }
 
-        public async Task<bool> DeleteFromCart(string sessionId, string carId)
+        public async Task<bool> DeleteFromCart(string sessionId, string id)
         {
             var cartItems = await _getCartItems.GetItemsInCart(sessionId);
             if (cartItems.Any())
             {
-                CartItem itemToDelete = cartItems.Where(item => item.CarId == carId).FirstOrDefault();
+                CartItem itemToDelete = cartItems.Where(item => item.Id == id).FirstOrDefault();
 
                 if (itemToDelete is null)
                 {
@@ -133,8 +133,8 @@ namespace CarsUnlimited.CartAPI.Services
 
                 try
                 {
-                    _logger.LogInformation($"DeleteFromCart: Removed {itemToDelete.CarId} from cart session {itemToDelete.SessionId}");
-                    return await _redisCacheClient.GetDbFromConfiguration().RemoveAsync($"{itemToDelete.SessionId}_{itemToDelete.CarId}");
+                    _logger.LogInformation($"DeleteFromCart: Removed {itemToDelete.Id} from cart session {itemToDelete.SessionId}");
+                    return await _redisCacheClient.GetDbFromConfiguration().RemoveAsync($"{itemToDelete.SessionId}_{itemToDelete.Id}");
                 }
                 catch (RedisException ex)
                 {

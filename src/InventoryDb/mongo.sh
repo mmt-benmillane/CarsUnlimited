@@ -21,7 +21,7 @@ while [[ $? -ne 0 && $COUNTER -lt 5 ]] ; do
 done
 
 # Restore from dump
-mongorestore --db=CarsUnlimitedDb --collection=inventory /dump/inventory.bson
+mongorestore --db=CarsUnlimitedDb --collection=inventory /dump/CarsUnlimitedDb/inventory.bson
 
 # Keep container running
 tail -f /dev/null

@@ -32,78 +32,6 @@ services:
     ports:
     - 27017:27017
 
-  kong-migrations:
-    image: "${KONG_DOCKER_TAG:-kong:latest}"
-    command: kong migrations bootstrap
-    depends_on:
-      - kongdb
-    environment:
-      KONG_DATABASE: postgres
-      KONG_PG_DATABASE: ${KONG_PG_DATABASE:-kong}
-      KONG_PG_HOST: kongdb
-      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-kong}
-      KONG_PG_USER: ${KONG_PG_USER:-kong}
-    links:
-      - kongdb:kongdb
-    restart: on-failure
-
-  konga:
-    image: pantsel/konga
-    container_name: konga
-    depends_on:
-      - kong
-    environment:
-      NODE_ENV: production
-    links:
-      - kong:kong
-    ports:
-      - "1337:1337/tcp"
-    restart: on-failure
-    volumes:
-      - ./kongadata:/app/kongadata
-
-  kong:
-    image: "${KONG_DOCKER_TAG:-kong:latest}"
-    container_name: kong
-    user: "${KONG_USER:-root}"
-    depends_on:
-      - kongdb
-    environment:
-      KONG_ADMIN_ACCESS_LOG: /dev/stdout
-      KONG_ADMIN_ERROR_LOG: /dev/stderr
-      KONG_ADMIN_LISTEN: '0.0.0.0:8001'
-      KONG_CASSANDRA_CONTACT_POINTS: kongdb
-      KONG_DATABASE: postgres
-      KONG_PG_DATABASE: ${KONG_PG_DATABASE:-kong}
-      KONG_PG_HOST: kongdb
-      KONG_PG_PASSWORD: ${KONG_PG_PASSWORD:-kong}
-      KONG_PG_USER: ${KONG_PG_USER:-kong}
-      KONG_PROXY_ACCESS_LOG: /dev/stdout
-      KONG_PROXY_ERROR_LOG: /dev/stderr
-    ports:
-      - "8000:8000/tcp"
-      - "8001:8001/tcp"
-      - "8443:8443/tcp"
-      - "8444:8444/tcp"
-    restart: on-failure
-
-  kongdb:
-    image: postgres:9.5
-    environment:
-      POSTGRES_DB: ${KONG_PG_DATABASE:-kong}
-      POSTGRES_PASSWORD: ${KONG_PG_PASSWORD:-kong}
-      POSTGRES_USER: ${KONG_PG_USER:-kong}
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "${KONG_PG_USER:-kong}"]
-      interval: 30s
-      timeout: 30s
-      retries: 3
-    restart: on-failure
-    stdin_open: true
-    tty: true
-    volumes:
-      - ./dbdata:/var/lib/postgresql/data
-
   inventoryapi:
     image: ${DOCKER_REGISTRY-}inventory.api
     build:
@@ -158,7 +86,6 @@ services:
       - ServiceBusConfiguration__HostName=rabbitmq
       - ServiceBusConfiguration__UserName=user
       - ServiceBusConfiguration__Password=bitnami
-      - CartApiKey=THIS_IS_MY_KEY
     depends_on:
       - cartdb
       - rabbitmq
@@ -193,43 +120,6 @@ services:
     depends_on:
       - rabbitmq
 
-  webui:
-    image: ${DOCKER_REGISTRY-}web
-    build:
-      context: .
-      dockerfile: CarsUnlimited.Web/Dockerfile
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - TracingConfiguration__Exporter=0
-      - TracingConfiguration__JaegerEndpoint__Host=jaeger
-      - TracingConfiguration__JaegerEndpoint__Port=6831
-      - ApiGatewayUrl=http://kong:8000/
-      - ApiKey=CHANGE_ME
-      - CartApiKey=THIS_IS_MY_KEY
-      - InventoryApiKey=THIS_IS_MY_KEY
-    ports:
-      - 5000:80
-    depends_on:
-      - kong
-
-  reverse:
-    build:
-      context: CarsUnlimited.ReverseProxy
-      dockerfile: Dockerfile
-    ports:
-      - 80:80
-    volumes:
-      - ./CarsUnlimited.ReverseProxy/html:/usr/share/nginx/html
-      - ./CarsUnlimited.ReverseProxy/conf:/etc/nginx
-    depends_on:
-      - webui
-      - konga
-      - rabbitmq
-      - inventoryapi
-      - inventoryworker
-
 volumes:
   rabbitmq-data:
-    driver: local
-  postgresql_data:
     driver: local

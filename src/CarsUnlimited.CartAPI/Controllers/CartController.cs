@@ -61,8 +61,11 @@ namespace CarsUnlimited.CartAPI.Controllers
         {
             if(!string.IsNullOrWhiteSpace(sessionId))
             {
-                List<CartItem> cartItems = await _getCartItems.GetItemsInCart(sessionId);
-                return StatusCode(200, cartItems);
+                Cart cart = new Cart
+                {
+                    Items = await _getCartItems.GetItemsInCart(sessionId)
+                };
+                return StatusCode(200, cart);
             } else
             {
                 return StatusCode(404);
@@ -85,11 +88,11 @@ namespace CarsUnlimited.CartAPI.Controllers
 
         [HttpGet]
         [Route("delete-item-from-cart")]
-        public async Task<IActionResult> DeleteItemFromCart([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId, string carId)
+        public async Task<IActionResult> DeleteItemFromCart([FromHeader(Name = "X-CarsUnlimited-SessionId")] string sessionId, string id)
         {
-            if(!string.IsNullOrWhiteSpace(sessionId) && !string.IsNullOrWhiteSpace(carId))
+            if(!string.IsNullOrWhiteSpace(sessionId) && !string.IsNullOrWhiteSpace(id))
             {
-                return StatusCode(200, await _cartService.DeleteFromCart(sessionId, carId));
+                return StatusCode(200, await _cartService.DeleteFromCart(sessionId, id));
             }
 
             return StatusCode(404);
@@ -114,22 +117,17 @@ namespace CarsUnlimited.CartAPI.Controllers
 
         [HttpPost]
         [Route("complete-cart")]
-        public async Task<IActionResult> CompleteCart([FromHeader(Name = "X-CarsUnlimited-CartApiKey")] string cartApiKey, string sessionId)
+        public async Task<IActionResult> CompleteCart([FromHeader(Name = "X-CarsUnlimited-SessionId")]string sessionId)
         {
-            if(!string.IsNullOrWhiteSpace(cartApiKey) && cartApiKey == _config.GetValue<string>("CartApiKey"))
+            var serviceBusConfig = _config.GetSection("ServiceBusConfiguration").Get<ServiceBusConfiguration>();
+            ConnectionFactory connectionFactory = new ConnectionFactory
             {
-                var serviceBusConfig = _config.GetSection("ServiceBusConfiguration").Get<ServiceBusConfiguration>();
-                ConnectionFactory connectionFactory = new ConnectionFactory
-                {
-                    HostName = serviceBusConfig.HostName,
-                    UserName = serviceBusConfig.UserName,
-                    Password = serviceBusConfig.Password
-                };
-                await _cartService.CompleteCart(sessionId, connectionFactory);
-                return StatusCode(200);
-            }
-
-            return StatusCode(401);
+                HostName = serviceBusConfig.HostName,
+                UserName = serviceBusConfig.UserName,
+                Password = serviceBusConfig.Password
+            };
+            await _cartService.CompleteCart(sessionId, connectionFactory);
+            return StatusCode(200);        
         }
     }
 }
