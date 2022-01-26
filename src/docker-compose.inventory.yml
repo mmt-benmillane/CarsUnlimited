@@ -2,16 +2,13 @@ version: '3.7'
 
 services:
 
-  jaeger:
-    image: jaegertracing/all-in-one:latest
-    ports:
-      - "6831:6831/udp"
-      - "16686:16686"
-
   inventorydb:
-   image: mongo:4.4-bionic
-   ports:
-   - 27017:27017
+    container_name: mongodb
+    build:
+      context: InventoryDb/
+      dockerfile: Dockerfile
+    ports:
+    - 27017:27017
 
   inventory-api:
    image: ${DOCKER_REGISTRY-}inventory.api
@@ -26,5 +23,6 @@ services:
    - TracingConfiguration__Exporter=-1
    - TracingConfiguration__JaegerEndpoint__Host=jaeger
    - TracingConfiguration__JaegerEndpoint__Port=6831
+   - AllowedOrigins="http://localhost:3000"
    depends_on:
     - inventorydb    

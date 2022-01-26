@@ -2,19 +2,22 @@ package main
 
 import (
 	"carsunlimited-purchase-api/controllers"
-	"github.com/gin-gonic/gin"
 	"net/http"
+
+	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
 
-	r := gin.Default()
+	router := gin.Default()
 
-	r.GET("/", func(c *gin.Context) {
+	router.GET("/", func(c *gin.Context) {
 		c.Status(http.StatusNoContent)
 	})
 
-	r.POST("/api/purchase/:id", controllers.CompletePurchase)
+	router.POST("/api/purchase/:id", controllers.CompletePurchase)
 
-	r.Run()
+	router.Use(cors.Default())
+	router.Run()
 }

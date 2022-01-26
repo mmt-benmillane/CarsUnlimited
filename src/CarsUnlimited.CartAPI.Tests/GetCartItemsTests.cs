@@ -23,8 +23,8 @@ namespace CarsUnlimited.CartAPI.Tests
             _mockIRedisCacheClient = new Mock<IRedisCacheClient>();
             _mockILogger = new Mock<ILogger<UpdateCartService>>();
             _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().SearchKeysAsync(It.IsAny<string>())).ReturnsAsync(new List<string>(){ "one", "two" });
-            _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().GetAsync<CartItem>("one", It.IsAny<CommandFlags>())).ReturnsAsync(new CartItem() { SessionId = "one", CarId = "three" });
-            _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().GetAsync<CartItem>("two", It.IsAny<CommandFlags>())).ReturnsAsync(new CartItem() { SessionId = "two", CarId = "four" });
+            _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().GetAsync<CartItem>("one", It.IsAny<CommandFlags>())).ReturnsAsync(new CartItem() { SessionId = "one", Id = "three" });
+            _mockIRedisCacheClient.Setup(x => x.GetDbFromConfiguration().GetAsync<CartItem>("two", It.IsAny<CommandFlags>())).ReturnsAsync(new CartItem() { SessionId = "two", Id = "four" });
         }
 
         [TestMethod]
@@ -33,8 +33,8 @@ namespace CarsUnlimited.CartAPI.Tests
             GetCartItems getCartItems = new GetCartItems(_mockIRedisCacheClient.Object, _mockILogger.Object);
             var result = await getCartItems.GetItemsInCart("test");
 
-            Assert.AreEqual("three", result[0].CarId);
-            Assert.AreEqual("four", result[1].CarId);
+            Assert.AreEqual("three", result[0].Id);
+            Assert.AreEqual("four", result[1].Id);
 
         }
         
